@@ -129,8 +129,8 @@ class keyValueClusterStore(threading.Thread):
             # Vote for globalElectionTimer
             while True:
                 t_end = time.time() + globalElectionTimer
-                print("t_end = ", t_end, " time.time()", time.time())
-                print("\nCluster Node ", self.clusterName, " waiting for ", globalElectionTimer, " seconds at --> ", time.asctime(time.localtime(time.time())), file=sys.stderr)
+                if DEBUG_STDERR:
+                    print("\nCluster Node ", self.clusterName, " waiting for ", globalElectionTimer, " seconds at --> ", time.asctime(time.localtime(time.time())), file=sys.stderr)
                 while time.time() < t_end:
                     time.sleep(1)
                     isGlobalElectionTimerChangedMutex.acquire()
@@ -283,21 +283,23 @@ class keyValueClusterStore(threading.Thread):
                     #globalIsCNodeLeaderMutex.acquire()
                     #globalIsCNodeLeader = True
                     #globalIsCNodeLeaderMutex.release()
-                    print("MSG : ", self.clusterName, " has changed it's state to ", globalClusterState, " for term ", globalTerm, file=sys.stderr)
+                    if DEBUG_STDERR:
+                        print("MSG : ", self.clusterName, " has changed it's state to ", globalClusterState, " for term ", globalTerm, file=sys.stderr)
                     globalClusterStateMutex.release()
 
                 # Send heartbeat_message to all servers
                 while True:
                     #globalIsCNodeLeaderMutex.acquire()
                     if globalClusterState == "Leader":
-
+                        print("Leader ", self.clusterName, "Sending Heartbeat Message", file=sys.stderr)
                         globalElectionTimerMutex.acquire()
                         globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
                         globalElectionTimer = globalElectionTimer / 100
                         isGlobalElectionTimerChangedMutex.acquire()
                         isGlobalElectionTimerChanged = True
                         isGlobalElectionTimerChangedMutex.release()
-                        print("Leader Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
+                        if DEBUG_STDERR:
+                            print("Leader Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
                         globalElectionTimerMutex.release()
 
                         # Create KeyValueMessage object and wrap setup_connection object inside it
@@ -321,8 +323,6 @@ class keyValueClusterStore(threading.Thread):
                             data = KvHeartBeatMessage.SerializeToString()
                             size = encode_varint(len(data))
                             heartBeatSocket.sendall(size + data)
-                            if DEBUG_STDERR:
-                                print("MSG : Hearbeat Message sent to replica server --> ", clusterVal.clusterName)
                             heartBeatSocket.close()
                         globalClusterInfoDictMutex.release()
                     else:
@@ -330,13 +330,13 @@ class keyValueClusterStore(threading.Thread):
                     #globalIsCNodeLeaderMutex.release()
                     time.sleep(HEARTBEAT_TIME)
         elif self.kv_message_instance.WhichOneof('key_value_message') == 'heartbeat_message':
-            print("Heartbeat Message received from leader --> ", self.kv_message_instance.heartbeat_message.clusterName, " for term ",
-                  self.kv_message_instance.heartbeat_message.term, file=sys.stderr)
+            if DEBUG_STDERR:
+                print("Heartbeat Message received from leader --> ", self.kv_message_instance.heartbeat_message.clusterName, " for term ",
+                      self.kv_message_instance.heartbeat_message.term, file=sys.stderr)
 
             # if current term of cluster is greater than that of heartbeat message term - do nothing otherwise reset the globalElectionTimer
             hearbeatTerm = self.kv_message_instance.heartbeat_message.term
             globalTermMutex.acquire()
-            print("globalTerm = " , globalTerm, " hearbeatTerm ", hearbeatTerm, file=sys.stderr)
             if globalTerm <= hearbeatTerm:
 
                 globalTerm = hearbeatTerm
@@ -351,7 +351,8 @@ class keyValueClusterStore(threading.Thread):
                 isGlobalElectionTimerChangedMutex.acquire()
                 isGlobalElectionTimerChanged = True
                 isGlobalElectionTimerChangedMutex.release()
-                print("Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
+                if DEBUG_STDERR:
+                    print("Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
                 globalElectionTimerMutex.release()
 
             globalTermMutex.release()
