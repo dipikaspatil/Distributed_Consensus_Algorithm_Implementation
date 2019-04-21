@@ -51,12 +51,13 @@ def includeAllClusters(newClusterIn, cluster):
 # Starting point for Setup Replica Connections
 if __name__ == "__main__":
     # Validating command line arguments
-    if len(sys.argv) != 2:
-        print("ERROR : Invalid # of command line arguments. Expected 2 arguments.")
+    if len(sys.argv) != 3:
+        print("ERROR : Invalid # of command line arguments. Expected 3 arguments.")
         sys.exit(1)
 
     # Local variables
-    clusterFilename = sys.argv[1]
+    requestType = sys.argv[1]
+    clusterFilename = sys.argv[2]
 
     # File validation
     if not (path.exists(clusterFilename) and path.isfile(clusterFilename)):
@@ -77,11 +78,18 @@ if __name__ == "__main__":
         # Connect client socket to server using 3 way handshake
         clusterSocket.connect((clusterVar.clusterIpAddress, int(clusterVar.clusterPortNumber)))
 
-        # Create KeyValueMessage object and wrap InitReplica object inside it
+        # Create KeyValueMessage object and wrap setup_connection object inside it
         kv_message_instance = KeyValueClusterStore_pb2.KeyValueMessage()
-        for cluster in clusterInfoList:
-            includeAllClusters(kv_message_instance.setup_connection.all_clusters.add(), cluster)
 
+        if requestType == "setup_connection":
+            for cluster in clusterInfoList:
+                includeAllClusters(kv_message_instance.setup_connection.all_clusters.add(), cluster)
+        elif requestType == "start_election":
+            kv_message_instance.start_election.src = "Admin"
+            kv_message_instance.start_election.term = 1
+        else :
+            print("ERROR : Invalid request. There can be 2 request in order - 1 - setup_connection , 2 - start_election")
+            sys.exit(1)
         # Send setup_connection message to cluster socket
         data = kv_message_instance.SerializeToString()
         size = encode_varint(len(data))

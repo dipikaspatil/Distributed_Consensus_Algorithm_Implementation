@@ -11,97 +11,35 @@ message SetupConnection {
     repeated Cluster all_clusters = 2;
 }
 
-message ConnectReplica {
-    string replica_name = 1;
-}
-
-message ConnectClient {
+message StartElection {
     string src = 1;
-    string transaction_id = 2;
+    uint32 term = 2;
 }
 
-message ClientRequest {
-    string request_type = 1;
-    string transaction_id = 2;
-    string request_id = 3;
-
-    message GetRequest {
-        uint32 key = 1;
-    }
-
-    message PutRequest {
-        uint32 key = 1;
-        string value = 2;
-    }
-
-    GetRequest get_request = 4;
-    PutRequest put_request = 5;
-    uint32 consistency_level = 6;
+message RequestVote {
+    uint32 term = 1;
+    string clusterName = 2;
+    string clusterIp = 3;
+    uint32 clusterPort = 4;
 }
 
-message CoordinatorResponse {
-    string response_type = 1;
-    string transaction_id = 2;
-    uint32 key = 3;
-    string value = 4;
-    string message = 5;
+message ResponseVote {
+    uint32 term = 1;
+    string voteStatus = 2;
+    string clusterName = 3;
 }
 
-message ReplicaRequest {
-    string src_replica_name = 1;
-    string dest_replica_name = 2;
-    string request_type = 3;
-    string transaction_id = 4;
-    string request_id = 5;
-
-    message GetRequest {
-        uint32 key = 1;
-    }
-
-    message PutRequest {
-        uint32 key = 1;
-        string value = 2;
-        string timestamp = 3;
-    }
-
-    GetRequest get_request = 6;
-    PutRequest put_request = 7;
-}
-
-message ReplicaResponse {
-    string src_replica_name = 1;
-    string dest_replica_name = 2;
-    string response_type = 3;
-    string transaction_id = 4;
-    string request_id = 5;
-    uint32 key = 6;
-    string value = 7;
-    string timestamp = 8;
-    string message = 9;
-}
-
-message ReadRepair {
-    uint32 key = 1;
-    string value = 2;
-    string timestamp = 3;
-}
-
-message HintedHandoff {
-    uint32 key = 1;
-    string value = 2;
-    string timestamp = 3;
+message HeartBeatMessage {
+    uint32 term = 1;
+    string clusterName = 2;
 }
 
 message KeyValueMessage {
     oneof key_value_message {
         SetupConnection setup_connection = 1;
-        ConnectReplica connect_replica = 2;
-        ConnectClient connect_client = 3;
-        ClientRequest client_request = 4;
-        CoordinatorResponse coordinator_response = 5;
-        ReplicaRequest replica_request = 6;
-        ReplicaResponse replica_response = 7;
-        ReadRepair read_repair = 8;
-        HintedHandoff hinted_handoff = 9;
+        StartElection start_election = 2;
+        RequestVote request_vote = 3;
+        ResponseVote response_vote = 4;
+        HeartBeatMessage heartbeat_message = 5;
     }
 }

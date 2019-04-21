@@ -1,6 +1,7 @@
 #!usr/bin/python3
 
 import sys
+import time
 import random
 import socket
 import threading
@@ -25,7 +26,13 @@ def decode_varint(data):
     """ Decode a protobuf varint to an int """
     return _DecodeVarint(data, 0)[0]
 
+
 # Global variables
+# Static variable to check if Cluster Node is leader
+#globalIsCNodeLeader = False
+
+# Mutex to prevent globalIsLeader
+#globalIsCNodeLeaderMutex = threading.Lock()
 
 # Global Dictionary to hold key value pair
 globalKeyValueDictionary = {}
@@ -51,6 +58,20 @@ globalClusterStateMutex = threading.Lock()
 globalElectionTimer = 0
 # Mutex to prevent globalElectionTimer
 globalElectionTimerMutex = threading.Lock()
+
+# Static variable to check if globalElectionTimer changed
+isGlobalElectionTimerChanged = False
+isGlobalElectionTimerChangedMutex = threading.Lock()
+
+# Static variable to keep check on vote count for specific term
+globalTermVoteCount = {}
+# Mutex to prevent globalTermVoteCount
+globalTermVoteCountMutex = threading.Lock()
+
+# Static variable to check if server has voted for specific term or not
+globalTermVoted = {}
+# Mutex to prevent globalTermVoted
+globalTermVotedMutex = threading.Lock()
 
 
 # Class to represent Other Cluster Information
@@ -79,13 +100,14 @@ class keyValueClusterStore(threading.Thread):
 
     # Method (run) works as entry point for each thread - overridden from threading.Thread
     def run(self):
+        global globalElectionTimer, globalTerm, globalClusterState, globalTermVoted, globalTermVoteCount, isGlobalElectionTimerChanged
+
         # Identify message type here by parsing incoming socket message
         data = self.incomingSocket.recv(1)
         size = decode_varint(data)
         self.kv_message_instance.ParseFromString(self.incomingSocket.recv(size))
 
         # Received Request to First Time Setup Connection
-        print(self.kv_message_instance.WhichOneof('key_value_message'))
         if self.kv_message_instance.WhichOneof('key_value_message') == 'setup_connection':
             print("\nSETUP_CONNECTION message received from Admin.", file=sys.stderr)
             # Initialize global_replica_info_dict
@@ -101,8 +123,238 @@ class keyValueClusterStore(threading.Thread):
                 print("Elements of Global Replica Info Dictionary --> ", file=sys.stderr)
                 for cKey, cVal in globalClusterInfoDict.items():
                     print(cVal.clusterName, cVal.clusterIpAddress, cVal.clusterPortNumber, file=sys.stderr)
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'start_election':
+            print("\nSTART_ELECTION message received from Admin.", file=sys.stderr)
 
+            # Vote for globalElectionTimer
+            while True:
+                t_end = time.time() + globalElectionTimer
+                print("t_end = ", t_end, " time.time()", time.time())
+                print("\nCluster Node ", self.clusterName, " waiting for ", globalElectionTimer, " seconds at --> ", time.asctime(time.localtime(time.time())), file=sys.stderr)
+                while time.time() < t_end:
+                    time.sleep(1)
+                    isGlobalElectionTimerChangedMutex.acquire()
+                    if isGlobalElectionTimerChanged:
+                        t_end = time.time() + globalElectionTimer
+                        isGlobalElectionTimerChanged = False
+                    isGlobalElectionTimerChangedMutex.release()
 
+                #time.sleep(globalElectionTimer)
+                print("\nFor Cluster Node ", self.clusterName, "globalElectionTimer timeout happened at --> ", time.asctime(time.localtime(time.time())), file=sys.stderr)
+
+                # Local variable
+                sendRequestForVote = False
+
+                # Increase the term
+                globalTermMutex.acquire()
+                #if globalTerm not in globalTermVoted:
+                globalTerm = globalTerm + 1
+                # Check if server has already voted for this term
+                globalTermVotedMutex.acquire()
+                # if not - vote yourself
+                if globalTerm not in globalTermVoted:
+                    #globalTerm = self.kv_message_instance.start_election.term
+                    # Vote yourself
+                    globalTermVoted[globalTerm] = True
+
+                    # Increase total count for specific term
+                    globalTermVoteCountMutex.acquire()
+                    globalTermVoteCount[globalTerm] = 1
+                    globalTermVoteCountMutex.release()
+
+                    # Change current state to Candidate
+                    globalClusterStateMutex.acquire()
+                    globalClusterState = "Candidate"
+                    if DEBUG_STDERR:
+                        print("Server ", self.clusterName, " changed it's current state to ", globalClusterState, file=sys.stderr)
+                    sendRequestForVote = True
+                    globalClusterStateMutex.release()
+
+                globalTermVotedMutex.release()
+                globalTermMutex.release()
+
+                # Request vote to all clusters
+                if sendRequestForVote:
+                    # Create KeyValueMessage object and wrap setup_connection object inside it
+                    KvReqeustVoteMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+                    KvReqeustVoteMessage.request_vote.term = globalTerm
+                    KvReqeustVoteMessage.request_vote.clusterName = self.clusterName
+                    KvReqeustVoteMessage.request_vote.clusterIp = self.clusterIp
+                    KvReqeustVoteMessage.request_vote.clusterPort = self.clusterPort
+
+                    globalClusterInfoDictMutex.acquire()
+                    # Create message - request vote and send to all servers
+                    for clusterKey, clusterVal in globalClusterInfoDict.items():
+                        # Create client socket IPv4 and TCP
+                        try:
+                            requestVoteSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        except:
+                            print("ERROR : Socket creation failed.")
+                            sys.exit(1)
+
+                        # Connect client socket to server using 3 way handshake
+                        requestVoteSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                        # Send setup_connection message to cluster socket
+                        data = KvReqeustVoteMessage.SerializeToString()
+                        size = encode_varint(len(data))
+                        requestVoteSocket.sendall(size + data)
+
+                        print("MSG : Request Vote Message sent to replica server --> ", clusterVal.clusterName)
+                        requestVoteSocket.close()
+                    globalClusterInfoDictMutex.release()
+
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'request_vote':
+            print("\nREQUEST_VOTE message received from .", self.kv_message_instance.request_vote.clusterName, " for term ", self.kv_message_instance.request_vote.term, file=sys.stderr)
+            requestedVoteTerm = self.kv_message_instance.request_vote.term
+            requestVoteIp = self.kv_message_instance.request_vote.clusterIp
+            requestVotePort = self.kv_message_instance.request_vote.clusterPort
+
+            # Check if server has already voted for this term
+
+            # Create message - response vote and send reply to server
+            # Create KeyValueMessage object and wrap setup_connection object inside it
+            KvResponseVoteMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+            KvResponseVoteMessage.response_vote.term = requestedVoteTerm
+            KvResponseVoteMessage.response_vote.clusterName = self.clusterName
+
+            # If server has not yet voted for the requested term and server's term is currently smaller or equal to requested term
+            # vote to server - True (yes) else False (no) TODO - need to change later considering log
+
+            globalTermMutex.acquire()
+            globalTermVotedMutex.acquire()
+            if requestedVoteTerm not in globalTermVoted and globalTerm <= requestedVoteTerm:
+                globalTerm = requestedVoteTerm
+                globalTermVoted[requestedVoteTerm] = True
+                KvResponseVoteMessage.response_vote.voteStatus = "YES"
+
+                # Increase total count for specific term
+                globalTermVoteCountMutex.acquire()
+                globalTermVoteCount[globalTerm] = 1
+                globalTermVoteCountMutex.release()
+
+                # Change current state to Candidate
+                globalClusterStateMutex.acquire()
+                globalClusterState = "Follower"
+                if DEBUG_STDERR:
+                    print("Server ", self.clusterName, " changed it's current state to ", globalClusterState, file=sys.stderr)
+                globalClusterStateMutex.release()
+            else:
+                KvResponseVoteMessage.response_vote.voteStatus = "NO"
+            globalTermVotedMutex.release()
+            globalTermMutex.release()
+
+            # Create socket and send response
+            # Create client socket IPv4 and TCP
+            try:
+                responseVoteSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            except:
+                print("ERROR : Socket creation failed.")
+                sys.exit(1)
+
+            # Connect client socket to server using 3 way handshake
+            responseVoteSocket.connect((requestVoteIp, requestVotePort))
+            # Send setup_connection message to cluster socket
+            data = KvResponseVoteMessage.SerializeToString()
+            size = encode_varint(len(data))
+            responseVoteSocket.sendall(size + data)
+
+            print("MSG : Response Vote Message as " , KvResponseVoteMessage.response_vote.voteStatus, " sent to cluster server --> ", self.kv_message_instance.request_vote.clusterName)
+            responseVoteSocket.close()
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'response_vote':
+            print("\nResponse Vote message received from .", self.kv_message_instance.response_vote.clusterName, " for term ",
+                  self.kv_message_instance.response_vote.term, "as ", self.kv_message_instance.response_vote.voteStatus, file=sys.stderr)
+
+            # Local variable
+            voteStatus = self.kv_message_instance.response_vote.voteStatus
+            voteCount = 0
+
+            if voteStatus == "YES": # True / yes
+                # Increase total count for specific term
+                globalTermVoteCountMutex.acquire()
+                globalTermVoteCount[globalTerm] = globalTermVoteCount[globalTerm] + 1
+                voteCount = globalTermVoteCount[globalTerm]
+                globalTermVoteCountMutex.release()
+
+                if voteCount == MAJORITY_CLUSTER_COUNT:
+                    # Elect oneself as leader and send heartbeat message to all - keep sending it on regular interval - 100ms
+                    # Change current state to Candidate
+                    globalClusterStateMutex.acquire()
+                    globalClusterState = "Leader"
+                    #globalIsCNodeLeaderMutex.acquire()
+                    #globalIsCNodeLeader = True
+                    #globalIsCNodeLeaderMutex.release()
+                    print("MSG : ", self.clusterName, " has changed it's state to ", globalClusterState, " for term ", globalTerm, file=sys.stderr)
+                    globalClusterStateMutex.release()
+
+                # Send heartbeat_message to all servers
+                while True:
+                    #globalIsCNodeLeaderMutex.acquire()
+                    if globalClusterState == "Leader":
+
+                        globalElectionTimerMutex.acquire()
+                        globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
+                        globalElectionTimer = globalElectionTimer / 100
+                        isGlobalElectionTimerChangedMutex.acquire()
+                        isGlobalElectionTimerChanged = True
+                        isGlobalElectionTimerChangedMutex.release()
+                        print("Leader Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
+                        globalElectionTimerMutex.release()
+
+                        # Create KeyValueMessage object and wrap setup_connection object inside it
+                        KvHeartBeatMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+                        KvHeartBeatMessage.heartbeat_message.term = globalTerm
+                        KvHeartBeatMessage.heartbeat_message.clusterName = self.clusterName
+
+                        globalClusterInfoDictMutex.acquire()
+                        # Create message - request vote and send to all servers
+                        for clusterKey, clusterVal in globalClusterInfoDict.items():
+                            # Create client socket IPv4 and TCP
+                            try:
+                                heartBeatSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                            except:
+                                print("ERROR : Socket creation failed.")
+                                sys.exit(1)
+
+                            # Connect client socket to server using 3 way handshake
+                            heartBeatSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                            # Send setup_connection message to cluster socket
+                            data = KvHeartBeatMessage.SerializeToString()
+                            size = encode_varint(len(data))
+                            heartBeatSocket.sendall(size + data)
+                            if DEBUG_STDERR:
+                                print("MSG : Hearbeat Message sent to replica server --> ", clusterVal.clusterName)
+                            heartBeatSocket.close()
+                        globalClusterInfoDictMutex.release()
+                    else:
+                        break
+                    #globalIsCNodeLeaderMutex.release()
+                    time.sleep(HEARTBEAT_TIME)
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'heartbeat_message':
+            print("Heartbeat Message received from leader --> ", self.kv_message_instance.heartbeat_message.clusterName, " for term ",
+                  self.kv_message_instance.heartbeat_message.term, file=sys.stderr)
+
+            # if current term of cluster is greater than that of heartbeat message term - do nothing otherwise reset the globalElectionTimer
+            hearbeatTerm = self.kv_message_instance.heartbeat_message.term
+            globalTermMutex.acquire()
+            print("globalTerm = " , globalTerm, " hearbeatTerm ", hearbeatTerm, file=sys.stderr)
+            if globalTerm <= hearbeatTerm:
+
+                globalTerm = hearbeatTerm
+
+                globalClusterStateMutex.acquire()
+                globalClusterState = "Follower"
+                globalClusterStateMutex.release()
+
+                globalElectionTimerMutex.acquire()
+                globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
+                globalElectionTimer = globalElectionTimer / 100
+                isGlobalElectionTimerChangedMutex.acquire()
+                isGlobalElectionTimerChanged = True
+                isGlobalElectionTimerChangedMutex.release()
+                print("Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
+                globalElectionTimerMutex.release()
+
+            globalTermMutex.release()
 
 # Class to represent Cluster Node Server
 class ClusterNodeServer:
@@ -124,6 +376,8 @@ class ClusterNodeServer:
 
     # Bind cluster node socket with given port
     def startCluster(self):
+        global globalElectionTimer, globalTerm, globalClusterState, globalTermVoted, globalTermVoteCount
+
         try:
             self.cSocket.bind(('', self.cPort))
         except:
@@ -147,7 +401,8 @@ class ClusterNodeServer:
         globalClusterStateMutex.release()
 
         globalElectionTimerMutex.acquire()
-        globalElectionTimer = random.randrange(150, 200)
+        globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
+        globalElectionTimer = globalElectionTimer/100
         print("Cluster Node Server Current Election Timeout Span : \t", globalElectionTimer, file=sys.stderr)
         globalElectionTimerMutex.release()
         print("----------------------------------------------------------------------------------------------------", file=sys.stderr)
@@ -158,6 +413,8 @@ class ClusterNodeServer:
 
     # Accept client request at cluster node socket
     def acceptRequet(self):
+        global globalElectionTimer, globalTerm, globalClusterState, globalTermVoted, globalTermVoteCount
+
         while True:
             try:
                 # Accept create new socket for
