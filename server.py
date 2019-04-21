@@ -193,7 +193,11 @@ class keyValueClusterStore(threading.Thread):
                             sys.exit(1)
 
                         # Connect client socket to server using 3 way handshake
-                        requestVoteSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                        try:
+                            requestVoteSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                        except:
+                            #print("ERROR : Socket creation failed for ", clusterVal.clusterName)
+                            continue
                         # Send setup_connection message to cluster socket
                         data = KvReqeustVoteMessage.SerializeToString()
                         size = encode_varint(len(data))
@@ -318,7 +322,11 @@ class keyValueClusterStore(threading.Thread):
                                 sys.exit(1)
 
                             # Connect client socket to server using 3 way handshake
-                            heartBeatSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                            try:
+                                heartBeatSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                            except:
+                                #print("ERROR : Socket creation failed for ", clusterVal.clusterName)
+                                continue
                             # Send setup_connection message to cluster socket
                             data = KvHeartBeatMessage.SerializeToString()
                             size = encode_varint(len(data))
