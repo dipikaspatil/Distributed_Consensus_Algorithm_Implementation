@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"5\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\"\xfc\x01\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
+  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\xe3\x01\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x1a\x46\n\x0c\x61ppend_entry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04term\x18\x03 \x01(\r\x12\x0c\n\x04indx\x18\x04 \x01(\x05\"\x88\x02\n\rClientRequest\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"k\n\x0eLeaderResponse\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xc7\x01\n\x13\x41ppendEntryResponse\x12\x16\n\x0etransaction_id\x18\x01 \x01(\t\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xaf\x03\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
 )
 
 
@@ -236,6 +236,57 @@ _RESPONSEVOTE = _descriptor.Descriptor(
 )
 
 
+_HEARTBEATMESSAGE_APPEND_ENTRY = _descriptor.Descriptor(
+  name='append_entry',
+  full_name='HeartBeatMessage.append_entry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='HeartBeatMessage.append_entry.key', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='HeartBeatMessage.append_entry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='term', full_name='HeartBeatMessage.append_entry.term', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='indx', full_name='HeartBeatMessage.append_entry.indx', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=511,
+  serialized_end=581,
+)
+
 _HEARTBEATMESSAGE = _descriptor.Descriptor(
   name='HeartBeatMessage',
   full_name='HeartBeatMessage',
@@ -257,6 +308,65 @@ _HEARTBEATMESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderIp', full_name='HeartBeatMessage.leaderIp', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderPort', full_name='HeartBeatMessage.leaderPort', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='entry', full_name='HeartBeatMessage.entry', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='msgType', full_name='HeartBeatMessage.msgType', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_HEARTBEATMESSAGE_APPEND_ENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=354,
+  serialized_end=581,
+)
+
+
+_CLIENTREQUEST_GETREQUEST = _descriptor.Descriptor(
+  name='GetRequest',
+  full_name='ClientRequest.GetRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ClientRequest.GetRequest.key', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -269,8 +379,294 @@ _HEARTBEATMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=353,
-  serialized_end=406,
+  serialized_start=781,
+  serialized_end=806,
+)
+
+_CLIENTREQUEST_PUTREQUEST = _descriptor.Descriptor(
+  name='PutRequest',
+  full_name='ClientRequest.PutRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='ClientRequest.PutRequest.key', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='ClientRequest.PutRequest.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=808,
+  serialized_end=848,
+)
+
+_CLIENTREQUEST = _descriptor.Descriptor(
+  name='ClientRequest',
+  full_name='ClientRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='transaction_id', full_name='ClientRequest.transaction_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='request_type', full_name='ClientRequest.request_type', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='get_request', full_name='ClientRequest.get_request', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='put_request', full_name='ClientRequest.put_request', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientIp', full_name='ClientRequest.clientIp', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientPort', full_name='ClientRequest.clientPort', index=5,
+      number=6, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_CLIENTREQUEST_GETREQUEST, _CLIENTREQUEST_PUTREQUEST, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=584,
+  serialized_end=848,
+)
+
+
+_LEADERRESPONSE = _descriptor.Descriptor(
+  name='LeaderResponse',
+  full_name='LeaderResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='transaction_id', full_name='LeaderResponse.transaction_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='key', full_name='LeaderResponse.key', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='LeaderResponse.value', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='message', full_name='LeaderResponse.message', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='request_type', full_name='LeaderResponse.request_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=850,
+  serialized_end=957,
+)
+
+
+_APPENDENTRYRESPONSE = _descriptor.Descriptor(
+  name='AppendEntryResponse',
+  full_name='AppendEntryResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='transaction_id', full_name='AppendEntryResponse.transaction_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='key', full_name='AppendEntryResponse.key', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='AppendEntryResponse.value', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='message', full_name='AppendEntryResponse.message', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='request_type', full_name='AppendEntryResponse.request_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='indx', full_name='AppendEntryResponse.indx', index=5,
+      number=6, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodeIp', full_name='AppendEntryResponse.clusterNodeIp', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodePort', full_name='AppendEntryResponse.clusterNodePort', index=7,
+      number=8, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodeName', full_name='AppendEntryResponse.clusterNodeName', index=8,
+      number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=960,
+  serialized_end=1159,
+)
+
+
+_COMMITENTRY = _descriptor.Descriptor(
+  name='CommitEntry',
+  full_name='CommitEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='CommitEntry.key', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='CommitEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1161,
+  serialized_end=1202,
 )
 
 
@@ -316,6 +712,34 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='client_request', full_name='KeyValueMessage.client_request', index=5,
+      number=6, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leader_response', full_name='KeyValueMessage.leader_response', index=6,
+      number=7, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='append_entry_response', full_name='KeyValueMessage.append_entry_response', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='commit_entry', full_name='KeyValueMessage.commit_entry', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -331,17 +755,27 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       name='key_value_message', full_name='KeyValueMessage.key_value_message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=409,
-  serialized_end=661,
+  serialized_start=1205,
+  serialized_end=1636,
 )
 
 _SETUPCONNECTION_CLUSTER.containing_type = _SETUPCONNECTION
 _SETUPCONNECTION.fields_by_name['all_clusters'].message_type = _SETUPCONNECTION_CLUSTER
+_HEARTBEATMESSAGE_APPEND_ENTRY.containing_type = _HEARTBEATMESSAGE
+_HEARTBEATMESSAGE.fields_by_name['entry'].message_type = _HEARTBEATMESSAGE_APPEND_ENTRY
+_CLIENTREQUEST_GETREQUEST.containing_type = _CLIENTREQUEST
+_CLIENTREQUEST_PUTREQUEST.containing_type = _CLIENTREQUEST
+_CLIENTREQUEST.fields_by_name['get_request'].message_type = _CLIENTREQUEST_GETREQUEST
+_CLIENTREQUEST.fields_by_name['put_request'].message_type = _CLIENTREQUEST_PUTREQUEST
 _KEYVALUEMESSAGE.fields_by_name['setup_connection'].message_type = _SETUPCONNECTION
 _KEYVALUEMESSAGE.fields_by_name['start_election'].message_type = _STARTELECTION
 _KEYVALUEMESSAGE.fields_by_name['request_vote'].message_type = _REQUESTVOTE
 _KEYVALUEMESSAGE.fields_by_name['response_vote'].message_type = _RESPONSEVOTE
 _KEYVALUEMESSAGE.fields_by_name['heartbeat_message'].message_type = _HEARTBEATMESSAGE
+_KEYVALUEMESSAGE.fields_by_name['client_request'].message_type = _CLIENTREQUEST
+_KEYVALUEMESSAGE.fields_by_name['leader_response'].message_type = _LEADERRESPONSE
+_KEYVALUEMESSAGE.fields_by_name['append_entry_response'].message_type = _APPENDENTRYRESPONSE
+_KEYVALUEMESSAGE.fields_by_name['commit_entry'].message_type = _COMMITENTRY
 _KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
   _KEYVALUEMESSAGE.fields_by_name['setup_connection'])
 _KEYVALUEMESSAGE.fields_by_name['setup_connection'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
@@ -357,11 +791,27 @@ _KEYVALUEMESSAGE.fields_by_name['response_vote'].containing_oneof = _KEYVALUEMES
 _KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
   _KEYVALUEMESSAGE.fields_by_name['heartbeat_message'])
 _KEYVALUEMESSAGE.fields_by_name['heartbeat_message'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['client_request'])
+_KEYVALUEMESSAGE.fields_by_name['client_request'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['leader_response'])
+_KEYVALUEMESSAGE.fields_by_name['leader_response'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['append_entry_response'])
+_KEYVALUEMESSAGE.fields_by_name['append_entry_response'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['commit_entry'])
+_KEYVALUEMESSAGE.fields_by_name['commit_entry'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
 DESCRIPTOR.message_types_by_name['SetupConnection'] = _SETUPCONNECTION
 DESCRIPTOR.message_types_by_name['StartElection'] = _STARTELECTION
 DESCRIPTOR.message_types_by_name['RequestVote'] = _REQUESTVOTE
 DESCRIPTOR.message_types_by_name['ResponseVote'] = _RESPONSEVOTE
 DESCRIPTOR.message_types_by_name['HeartBeatMessage'] = _HEARTBEATMESSAGE
+DESCRIPTOR.message_types_by_name['ClientRequest'] = _CLIENTREQUEST
+DESCRIPTOR.message_types_by_name['LeaderResponse'] = _LEADERRESPONSE
+DESCRIPTOR.message_types_by_name['AppendEntryResponse'] = _APPENDENTRYRESPONSE
+DESCRIPTOR.message_types_by_name['CommitEntry'] = _COMMITENTRY
 DESCRIPTOR.message_types_by_name['KeyValueMessage'] = _KEYVALUEMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -402,11 +852,63 @@ ResponseVote = _reflection.GeneratedProtocolMessageType('ResponseVote', (_messag
 _sym_db.RegisterMessage(ResponseVote)
 
 HeartBeatMessage = _reflection.GeneratedProtocolMessageType('HeartBeatMessage', (_message.Message,), dict(
+
+  append_entry = _reflection.GeneratedProtocolMessageType('append_entry', (_message.Message,), dict(
+    DESCRIPTOR = _HEARTBEATMESSAGE_APPEND_ENTRY,
+    __module__ = 'KeyValueClusterStore_pb2'
+    # @@protoc_insertion_point(class_scope:HeartBeatMessage.append_entry)
+    ))
+  ,
   DESCRIPTOR = _HEARTBEATMESSAGE,
   __module__ = 'KeyValueClusterStore_pb2'
   # @@protoc_insertion_point(class_scope:HeartBeatMessage)
   ))
 _sym_db.RegisterMessage(HeartBeatMessage)
+_sym_db.RegisterMessage(HeartBeatMessage.append_entry)
+
+ClientRequest = _reflection.GeneratedProtocolMessageType('ClientRequest', (_message.Message,), dict(
+
+  GetRequest = _reflection.GeneratedProtocolMessageType('GetRequest', (_message.Message,), dict(
+    DESCRIPTOR = _CLIENTREQUEST_GETREQUEST,
+    __module__ = 'KeyValueClusterStore_pb2'
+    # @@protoc_insertion_point(class_scope:ClientRequest.GetRequest)
+    ))
+  ,
+
+  PutRequest = _reflection.GeneratedProtocolMessageType('PutRequest', (_message.Message,), dict(
+    DESCRIPTOR = _CLIENTREQUEST_PUTREQUEST,
+    __module__ = 'KeyValueClusterStore_pb2'
+    # @@protoc_insertion_point(class_scope:ClientRequest.PutRequest)
+    ))
+  ,
+  DESCRIPTOR = _CLIENTREQUEST,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:ClientRequest)
+  ))
+_sym_db.RegisterMessage(ClientRequest)
+_sym_db.RegisterMessage(ClientRequest.GetRequest)
+_sym_db.RegisterMessage(ClientRequest.PutRequest)
+
+LeaderResponse = _reflection.GeneratedProtocolMessageType('LeaderResponse', (_message.Message,), dict(
+  DESCRIPTOR = _LEADERRESPONSE,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:LeaderResponse)
+  ))
+_sym_db.RegisterMessage(LeaderResponse)
+
+AppendEntryResponse = _reflection.GeneratedProtocolMessageType('AppendEntryResponse', (_message.Message,), dict(
+  DESCRIPTOR = _APPENDENTRYRESPONSE,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:AppendEntryResponse)
+  ))
+_sym_db.RegisterMessage(AppendEntryResponse)
+
+CommitEntry = _reflection.GeneratedProtocolMessageType('CommitEntry', (_message.Message,), dict(
+  DESCRIPTOR = _COMMITENTRY,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:CommitEntry)
+  ))
+_sym_db.RegisterMessage(CommitEntry)
 
 KeyValueMessage = _reflection.GeneratedProtocolMessageType('KeyValueMessage', (_message.Message,), dict(
   DESCRIPTOR = _KEYVALUEMESSAGE,

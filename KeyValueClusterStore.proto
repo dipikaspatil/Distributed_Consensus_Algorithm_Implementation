@@ -32,6 +32,62 @@ message ResponseVote {
 message HeartBeatMessage {
     uint32 term = 1;
     string clusterName = 2;
+    string leaderIp = 3;
+    uint32 leaderPort = 4;
+
+    message append_entry {
+        uint32 key = 1;
+        string value = 2;
+        uint32 term = 3;
+        int32 indx = 4;
+    }
+
+    append_entry entry = 5;
+    string msgType = 6;
+}
+
+message ClientRequest {
+    string transaction_id = 1;
+    string request_type = 2;
+
+    message GetRequest {
+        uint32 key = 1;
+    }
+
+    message PutRequest {
+        uint32 key = 1;
+        string value = 2;
+    }
+
+    GetRequest get_request = 3;
+    PutRequest put_request = 4;
+    string clientIp = 5;
+    uint32 clientPort = 6;
+}
+
+message LeaderResponse {
+    string transaction_id = 1;
+    uint32 key = 2;
+    string value = 3;
+    string message = 4;
+    string request_type = 5;
+}
+
+message AppendEntryResponse {
+    string transaction_id = 1;
+    uint32 key = 2;
+    string value = 3;
+    string message = 4;
+    string request_type = 5;
+    int32 indx = 6;
+    string clusterNodeIp = 7;
+    uint32 clusterNodePort = 8;
+    string clusterNodeName = 9;
+}
+
+message CommitEntry {
+    uint32 key = 1;
+    string value = 2;
 }
 
 message KeyValueMessage {
@@ -41,5 +97,9 @@ message KeyValueMessage {
         RequestVote request_vote = 3;
         ResponseVote response_vote = 4;
         HeartBeatMessage heartbeat_message = 5;
+        ClientRequest client_request = 6;
+        LeaderResponse leader_response = 7;
+        AppendEntryResponse append_entry_response = 8;
+        CommitEntry commit_entry = 9;
     }
 }
