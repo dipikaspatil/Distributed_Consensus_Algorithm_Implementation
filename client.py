@@ -4,7 +4,7 @@ import sys
 import socket
 from constants import *
 
-sys.path.append('/home/vchaska1/protobuf/protobuf-3.5.1/python')
+sys.path.append('/home/dipika_patil_linux/Downloads/protobuf-3.7.0/python')
 import KeyValueClusterStore_pb2
 from google.protobuf.internal.encoder import _VarintEncoder
 from google.protobuf.internal.decoder import _DecodeVarint
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         print("\n------------------------------------------------------------------------------------------------------------------------")
         # Local variables
         leader_ip = input("Enter leader ip ")
-        leader_port = input("Enter leader port ")
+        leader_port = int(input("Enter leader port "))
         # cc_transaction_id = ""
 
         u_req_choice = input("Enter request type (GET - 1 or PUT - 2) --> ")
@@ -72,12 +72,12 @@ if __name__ == "__main__":
 
         if u_req_type.lower() == "get":
             u_req_type = "get"
-            u_key = input("Enter Key a number --> ")
+            u_key = int(input("Enter Key a number --> "))
 
             # Create KeyValueMessage object and wrap ClientRequest object inside it
             kv_message_instance = KeyValueClusterStore_pb2.KeyValueMessage()
             kv_message_instance.client_request.request_type = u_req_type
-            kv_message_instance.client_request.transaction_id = cc_transaction_id
+            kv_message_instance.client_request.transId = cc_transaction_id
             kv_message_instance.client_request.get_request.key = int(u_key)
             kv_message_instance.client_request.request_type = "GET"
 
@@ -115,10 +115,14 @@ if __name__ == "__main__":
             # Create KeyValueMessage object and wrap ClientRequest object inside it
             kv_message_instance = KeyValueClusterStore_pb2.KeyValueMessage()
             kv_message_instance.client_request.request_type = u_req_type
-            kv_message_instance.client_request.transaction_id = cc_transaction_id
+            kv_message_instance.client_request.transId = cc_transaction_id
             kv_message_instance.client_request.put_request.key = int(u_key)
             kv_message_instance.client_request.put_request.value = u_value
             kv_message_instance.client_request.request_type = "PUT"
+            kv_message_instance.client_request.clientIp = socket.gethostbyname(socket.gethostname())
+            kv_message_instance.client_request.clientPort = clientSocket.getsockname()[1]
+
+            print(type(clientSocket.getsockname()[1]))
 
             # Send KeyValueMessage to coordinator socket
             data = kv_message_instance.SerializeToString()
