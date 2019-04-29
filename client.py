@@ -122,7 +122,7 @@ if __name__ == "__main__":
             kv_message_instance.client_request.clientIp = socket.gethostbyname(socket.gethostname())
             kv_message_instance.client_request.clientPort = clientSocket.getsockname()[1]
 
-            print(type(clientSocket.getsockname()[1]))
+            print("clientIP -->", kv_message_instance.client_request.clientIp, "clientPort -->", kv_message_instance.client_request.clientPort, file=sys.stderr)
 
             # Send KeyValueMessage to coordinator socket
             data = kv_message_instance.SerializeToString()
@@ -144,7 +144,7 @@ if __name__ == "__main__":
                 res_key = kv_message_response.leader_response.key
                 res_value = kv_message_response.leader_response.value
                 res_msg = kv_message_response.leader_response.message
-                if res_msg == "success":
+                if res_msg == "SUCCESS":
                     print((res_key, res_value), " pair written at coordinator side successfully.", file=sys.stderr)
                 else:
                     print("Something is wrong, PUT request code should not reach here", file=sys.stderr)
