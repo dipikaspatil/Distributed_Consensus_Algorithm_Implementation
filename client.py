@@ -72,7 +72,12 @@ if __name__ == "__main__":
 
         if u_req_type.lower() == "get":
             u_req_type = "get"
-            u_key = int(input("Enter Key a number --> "))
+            u_key_1 = input("Enter Key a number --> ")
+            while not u_key_1.isdigit():
+                print("ERROR : key is not number.")
+                u_key_1 = input("Enter Key a number --> ")
+
+            u_key = int(u_key_1)
 
             # Create KeyValueMessage object and wrap ClientRequest object inside it
             kv_message_instance = KeyValueClusterStore_pb2.KeyValueMessage()
@@ -109,7 +114,12 @@ if __name__ == "__main__":
                           res_key, "| TxID --> ", res_txid, file=sys.stderr)
         else:
             u_req_type = "put"
-            u_key = input("Enter Key a number --> ")
+            u_key_1 = input("Enter Key a number --> ")
+            while not u_key_1.isdigit():
+                print("ERROR : key is not number.")
+                u_key_1 = input("Enter Key a number --> ")
+
+            u_key = int(u_key_1)
             u_value = input("Enter Value --> ")
 
             # Create KeyValueMessage object and wrap ClientRequest object inside it
