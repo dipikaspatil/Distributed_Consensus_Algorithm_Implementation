@@ -101,11 +101,11 @@ if __name__ == "__main__":
             kv_message_response.ParseFromString(clientSocket.recv(size))
 
             if kv_message_response.WhichOneof('key_value_message') == 'leader_response':
-                res_key = kv_message_response.coordinator_response.key
-                res_value = kv_message_response.leader_response.value
-                res_txid = kv_message_response.leader_response.transaction_id
+                res_key = kv_message_response.leader_response.key
+                res_value = kv_message_response.leader_response.value.strip()
+                res_txid = kv_message_response.leader_response.transId
                 res_msg = kv_message_response.leader_response.message
-                if res_msg == "success":
+                if res_msg == "SUCCESS":
                     if DEBUG_STDERR:
                         print("Response received from leader for GET request | TxID --> ", res_txid, file=sys.stderr)
                     print("Key-Value Pair returned by leader --> ", (res_key, res_value), file=sys.stderr)

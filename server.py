@@ -507,7 +507,6 @@ class keyValueClusterStore(threading.Thread):
 
                 # Append leader's log
                 globalLogVectMutex.acquire()
-                print("globalLogVectMutex acquired", file=sys.stderr)
                 # Add the entry into Client Request dictionary with majority log write count - 1
                 globalClientRequestDictMutex.acquire()
                 print("globalClientRequestDictMutex acquired", file=sys.stderr)
@@ -517,10 +516,44 @@ class keyValueClusterStore(threading.Thread):
                 print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, " ) into it's Log", file=sys.stderr)
                 globalLogVect.append(Log(reqTransId, reqKey, reqValue, globalTerm, len(globalLogVect)))
                 globalLogVectMutex.release()
-            elif requestType == "GET":  # TODO
-                reqKey = self.kv_message_instance.client_request.get_request.key
-                if DEBUG_STDERR:
-                    print(requestType, " Request Message received from client for key --> ", reqKey, file=sys.stderr)
+            elif requestType == "GET":
+                clientReqTransId = self.kv_message_instance.client_request.transId
+                clientReqKey = self.kv_message_instance.client_request.get_request.key
+                clientSocket = self.incomingSocket
+                #if DEBUG_STDERR:
+                print(requestType, " Request Message received from client for key --> ", clientReqKey, file=sys.stderr)
+
+                # Respond with entry from persistent storage
+                fo = open("./" + self.persistentFileName, "r")
+                lines = fo.readlines()
+                clientReqValue = ""
+                entryFound = False
+                for line in lines:
+                    dataList = str(line).split(':')
+                    key = dataList[0]
+                    value = dataList[1]
+                    if int(key) == clientReqKey:
+                        clientReqValue = value
+                        entryFound = True
+                        break
+
+                # Respond back to client
+                KvLeaderResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+                KvLeaderResponseMessage.leader_response.transId = clientReqTransId
+                KvLeaderResponseMessage.leader_response.key = clientReqKey
+                KvLeaderResponseMessage.leader_response.value = clientReqValue
+                KvLeaderResponseMessage.leader_response.request_type = "PUT"
+
+                if entryFound:
+                    KvLeaderResponseMessage.leader_response.message = "SUCCESS"
+                else:
+                    KvLeaderResponseMessage.leader_response.message = "FAIL"
+
+                # Send setup_connection message to cluster socket
+                data = KvLeaderResponseMessage.SerializeToString()
+                size = encode_varint(len(data))
+                clientSocket.sendall(size + data)
+                clientSocket.close()
 
         elif self.kv_message_instance.WhichOneof('key_value_message') == 'append_entry_response':
             if DEBUG_STDERR:
@@ -534,8 +567,6 @@ class keyValueClusterStore(threading.Thread):
             clientReqMessage = self.kv_message_instance.append_entry_response.message
             clientReqClusterIp = self.kv_message_instance.append_entry_response.clusterNodeIp
             clientReqClusterPort = self.kv_message_instance.append_entry_response.clusterNodePort
-            # clientReqClientIp = self.kv_message_instance.append_entry_response.clientIp
-            # clientReqClientPort = self.kv_message_instance.append_entry_response.clientPort
 
             if clientReqMessage == "SUCCESS":
                 commitEntry = False  # Variable to send response to all other IPs
@@ -570,7 +601,7 @@ class keyValueClusterStore(threading.Thread):
                             out.writelines(lines)
                             out.close()
 
-                        # Response back to client
+                        # Respond back to client
                         KvLeaderResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
                         KvLeaderResponseMessage.leader_response.transId = clientReqTransId
                         KvLeaderResponseMessage.leader_response.key = clientReqKey
