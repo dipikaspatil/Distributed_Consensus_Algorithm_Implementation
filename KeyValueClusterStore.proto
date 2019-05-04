@@ -85,8 +85,9 @@ message AppendEntryResponse {
     int32 indx = 6;
     string clusterNodeIp = 7;
     uint32 clusterNodePort = 8;
-    string clientIp = 9;
-    uint32 clientPort = 10;
+    string clusterNodeName = 9;
+    string clientIp = 10;
+    uint32 clientPort = 11;
 }
 
 message CommitEntry {

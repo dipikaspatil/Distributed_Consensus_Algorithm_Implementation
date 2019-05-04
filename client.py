@@ -109,9 +109,11 @@ if __name__ == "__main__":
                     if DEBUG_STDERR:
                         print("Response received from leader for GET request | TxID --> ", res_txid, file=sys.stderr)
                     print("Key-Value Pair returned by leader --> ", (res_key, res_value), file=sys.stderr)
-                else:
+                elif res_msg == "FAIL":
                     print("KEY NOT FOUND at cluster/leader for GET request key ",
                           res_key, "| TxID --> ", res_txid, file=sys.stderr)
+                else:
+                    print("ERROR :" , res_msg, file=sys.stderr)
         else:
             u_req_type = "put"
             u_key_1 = input("Enter Key a number --> ")
@@ -156,7 +158,9 @@ if __name__ == "__main__":
                 res_msg = kv_message_response.leader_response.message
                 if res_msg == "SUCCESS":
                     print((res_key, res_value), " pair written at coordinator side successfully.", file=sys.stderr)
-                else:
+                elif res_msg == "FAIL":
                     print("Something is wrong, PUT request code should not reach here", file=sys.stderr)
+                else:
+                    print("ERROR :" , res_msg, file=sys.stderr)
 
         clientSocket.close()

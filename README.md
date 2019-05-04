@@ -8,3 +8,11 @@
 * python3 adminServer.py setup_connection list_replicas.txt 
 * python3 adminServer.py start_election list_replicas.txt
 * python3 client.py
+
+## Make file commands - step by step
+* To clean persistant files - **make clean**
+* To create .proto file - **make proto**
+* start server - using above commands 
+* To setup connection among server - **make setup**
+* To start election among servers - **make election**
+* To start client - **make client**

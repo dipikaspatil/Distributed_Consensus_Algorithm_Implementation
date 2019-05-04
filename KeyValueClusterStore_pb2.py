@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\x9a\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xcd\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x10\n\x08\x63lientIp\x18\t \x01(\t\x12\x12\n\nclientPort\x18\n \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xaf\x03\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
+  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\x9a\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xe6\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\x12\x10\n\x08\x63lientIp\x18\n \x01(\t\x12\x12\n\nclientPort\x18\x0b \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xaf\x03\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
 )
 
 
@@ -630,15 +630,22 @@ _APPENDENTRYRESPONSE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='clientIp', full_name='AppendEntryResponse.clientIp', index=8,
+      name='clusterNodeName', full_name='AppendEntryResponse.clusterNodeName', index=8,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='clientPort', full_name='AppendEntryResponse.clientPort', index=9,
-      number=10, type=13, cpp_type=3, label=1,
+      name='clientIp', full_name='AppendEntryResponse.clientIp', index=9,
+      number=10, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientPort', full_name='AppendEntryResponse.clientPort', index=10,
+      number=11, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -656,7 +663,7 @@ _APPENDENTRYRESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1001,
-  serialized_end=1206,
+  serialized_end=1231,
 )
 
 
@@ -693,8 +700,8 @@ _COMMITENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1208,
-  serialized_end=1249,
+  serialized_start=1233,
+  serialized_end=1274,
 )
 
 
@@ -783,8 +790,8 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       name='key_value_message', full_name='KeyValueMessage.key_value_message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1252,
-  serialized_end=1683,
+  serialized_start=1277,
+  serialized_end=1708,
 )
 
 _SETUPCONNECTION_CLUSTER.containing_type = _SETUPCONNECTION
