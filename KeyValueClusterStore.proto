@@ -95,6 +95,32 @@ message CommitEntry {
     string value = 2;
 }
 
+message LogRepair {
+    message LogEntry {
+        uint32 transId = 1;
+        uint32 key = 2;
+        string value = 3;
+        uint32 term = 4;
+        int32 indx = 5;
+    }
+
+    repeated LogEntry entry = 1;
+
+    string leaderIp = 2;
+    uint32 leaderPort = 3;
+    string clusterNodeIp = 4;
+    uint32 clusterNodePort = 5;
+}
+
+message LogRepairResponse {
+    string repairResponse = 1;
+    int32 indx = 2;
+    string leaderIp = 3;
+    uint32 leaderPort = 4;
+    string clusterNodeIp = 5;
+    uint32 clusterNodePort = 6;
+}
+
 message KeyValueMessage {
     oneof key_value_message {
         SetupConnection setup_connection = 1;
@@ -106,5 +132,7 @@ message KeyValueMessage {
         LeaderResponse leader_response = 7;
         AppendEntryResponse append_entry_response = 8;
         CommitEntry commit_entry = 9;
+        LogRepair log_repair = 10;
+        LogRepairResponse log_repair_response = 11;
     }
 }

@@ -27,6 +27,13 @@ def decode_varint(data):
     """ Decode a protobuf varint to an int """
     return _DecodeVarint(data, 0)[0]
 
+# Method to add log entry in protobuf object
+def addLogEntry(newLogEntry, logEntry):
+    newLogEntry.transId = logEntry.transId
+    newLogEntry.key = logEntry.key
+    newLogEntry.value = logEntry.value
+    newLogEntry.term = logEntry.term
+    newLogEntry.indx = logEntry.indx
 
 # Global variables
 # Static variable to check if Cluster Node is leader
@@ -157,7 +164,7 @@ class keyValueClusterStore(threading.Thread):
                     continue
                 globalClusterInfoDict[i] = ClusterInfo(cluster.name, cluster.ip, cluster.port)
                 i += 1
-            # Create empty file
+            # Create empty file - if not already available
             Path(self.persistentFileName).touch()
             self.incomingSocket.close()
 
@@ -170,6 +177,7 @@ class keyValueClusterStore(threading.Thread):
 
             # Vote for globalElectionTimer
             while True:
+                clusterLogRepair = False
                 t_end = time.time() + globalElectionTimer
                 if DEBUG_STDERR:
                     print("\nCluster Node ", self.clusterName, " waiting for ", globalElectionTimer, " seconds at --> ", time.asctime(time.localtime(time.time())), file=sys.stderr)
@@ -187,9 +195,20 @@ class keyValueClusterStore(threading.Thread):
                 globalRepairClusterNodeMutex.acquire()
                 if self.clusterName in globalRepairClusterNode:
                     globalRepairClusterNodeMutex.release()
+                    clusterLogRepair = True
                     time.sleep(1)
                     continue
                 globalRepairClusterNodeMutex.release()
+
+                # If log reapir is just finished - cluster will start getting hearbeat - so to avoid re-election - need below code
+                if clusterLogRepair:
+                    clusterLogRepair = False
+                    # Mark one time isGlobalElectionTimerChanged True
+                    isGlobalElectionTimerChangedMutex.acquire()
+                    isGlobalElectionTimerChanged = True
+                    isGlobalElectionTimerChangedMutex.release()
+                    continue
+
                 # Local variable
                 sendRequestForVote = False
 
@@ -586,13 +605,11 @@ class keyValueClusterStore(threading.Thread):
                 print("AppendEntryResponse Message received from --> ", self.kv_message_instance.append_entry_response.clusterNodeName, " for indx ",
                       self.kv_message_instance.append_entry_response.indx, " with result as ", self.kv_message_instance.append_entry_response.result,
                       file=sys.stderr)
-            # Check if client request is in dictionary i.e. client is waiting for response from leader
+            # Check if client request is in dictionary (to check if client is waiting for response from leader)
             clientReqTransId = self.kv_message_instance.append_entry_response.transId
             clientReqKey = self.kv_message_instance.append_entry_response.key
             clientReqValue = self.kv_message_instance.append_entry_response.value
             clientReqMessage = self.kv_message_instance.append_entry_response.message
-            clientReqClusterIp = self.kv_message_instance.append_entry_response.clusterNodeIp
-            clientReqClusterPort = self.kv_message_instance.append_entry_response.clusterNodePort
 
             if clientReqMessage == "SUCCESS":
                 commitEntry = False  # Variable to send response to all other IPs
@@ -692,8 +709,39 @@ class keyValueClusterStore(threading.Thread):
                 globalRepairClusterNode.add(self.kv_message_instance.append_entry_response.clusterNodeName)
                 globalRepairClusterNodeMutex.release()
 
+                # Create log repair KeyValueMessage
+                indx = self.kv_message_instance.append_entry_response.indx
+                newIndx = indx - 1 if indx != 0 else 0
 
+                KvLogCorrectionMessage = KeyValueClusterStore_pb2.KeyValueMessage()
 
+                globalLogVectMutex.acquire()
+                for indx in range(newIndx, len(globalLogVect)):
+                    addLogEntry(KvLogCorrectionMessage.log_repair.entry.add(), globalLogVect[indx])
+                globalLogVectMutex.release()
+
+                KvLogCorrectionMessage.log_repair.leaderIp = self.clusterIp
+                KvLogCorrectionMessage.log_repair.leaderPort = self.clusterPort
+                KvLogCorrectionMessage.log_repair.clusterNodeIp = self.kv_message_instance.append_entry_response.clusterNodeIp
+                KvLogCorrectionMessage.log_repair.clusterNodePort = self.kv_message_instance.append_entry_response.clusterNodePort
+
+                try:
+                    logRepairSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                except:
+                    print("ERROR : Socket creation failed.")
+                    sys.exit(1)
+
+                # Connect client socket to server using 3 way handshake
+                try:
+                    logRepairSocket.connect((self.kv_message_instance.append_entry_response.clusterNodeIp, self.kv_message_instance.append_entry_response.clusterNodePort))
+                except:
+                    print("ERROR : Socket creation failed for ", self.kv_message_instance.append_entry_response.clusterNodePort)
+
+                # Send setup_connection message to cluster socket
+                data = KvLogCorrectionMessage.SerializeToString()
+                size = encode_varint(len(data))
+                logRepairSocket.sendall(size + data)
+                logRepairSocket.close()
         elif self.kv_message_instance.WhichOneof('key_value_message') == 'commit_entry':
             if DEBUG_STDERR:
                 print("CommitEntry Message received from Leader key --> ", self.kv_message_instance.commit_entry.key, " value ",
@@ -722,9 +770,150 @@ class keyValueClusterStore(threading.Thread):
                 out = open("./" + self.persistentFileName, "w")
                 out.writelines(lines)
                 out.close()
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'log_repair':
+            if DEBUG_STDERR:
+                print("LogRepair Message received from Leader --> ", file=sys.stderr)
+            counter = 1
+            status = False
+            startIndx = -1
+            globalLogVectMutex.acquire()
+            for entry in self.kv_message_instance.log_repair.entry:
+                indx = entry.indx
+                if startIndx == -1:
+                    startIndx = indx
+                if counter == 1 and len(globalLogVect) > indx:
+                    if indx != 0 and globalLogVect[indx].indx != indx: # if log correction reaches to 0th index - simply correct log. Else need to break and send for log one prior
+                        break;
+                # if code reaches here - need to correct all logs
+                status = True
+                if len(globalLogVect) > indx:
+                    globalLogVect[indx] = Log(entry.transId, entry.key, entry.value, entry.term, entry.indx)
+                else:
+                    globalLogVect.append(Log(entry.transId, entry.key, entry.value, entry.term, entry.indx))
+            globalLogVectMutex.release()
+
+            # Create log repair response message
+            KvLogCorrectionResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+            if status:
+                # Successful log repair
+                KvLogCorrectionResponseMessage.log_repair_response.repairResponse = "SUCCESS"
+                # Commit entries into persistent storage
+                for entry in self.kv_message_instance.log_repair.entry:
+                    fo = open("./" + self.persistentFileName, "r")
+                    lines = fo.readlines()
+                    lineNum = 0
+                    commit = False
+                    for line in lines:
+                        dataList = str(line).split(':')
+                        key = dataList[0]
+                        value = dataList[1]
+                        #print("key -->", key, " type -->", type(key), " clientReqKey -->", self.kv_message_instance.commit_entry.key, " type -->",
+                         #     type(self.kv_message_instance.commit_entry.key), file=sys.stderr)
+                        if int(key) == entry.key:
+                            # print("inside if-->")
+                            lines[lineNum] = str(key) + ':' + entry.value + '\n'
+                            commit = True
+                            break
+                        lineNum += 1
+                    if not commit:
+                        lines.append(str(key) + ':' + entry.value + '\n')
+                        #out = open("./" + self.persistentFileName, "a")
+                        #out.write(str(entry.key) + ":" + entry.value + '\n')
+                        #out.close()
+                    #else:
+                out = open("./" + self.persistentFileName, "w")
+                out.writelines(lines)
+                out.close()
+
+            else:
+                # Unsuccessful log repair - need few more entries from leader
+                KvLogCorrectionResponseMessage.log_repair_response.repairResponse = "FAIL"
+
+            KvLogCorrectionResponseMessage.log_repair_response.indx = startIndx
+            KvLogCorrectionResponseMessage.log_repair_response.leaderIp = self.kv_message_instance.log_repair.leaderIp
+            KvLogCorrectionResponseMessage.log_repair_response.leaderPort = self.kv_message_instance.log_repair.leaderPort
+            KvLogCorrectionResponseMessage.log_repair_response.clusterNodeIp = self.kv_message_instance.log_repair.clusterNodeIp
+            KvLogCorrectionResponseMessage.log_repair_response.clusterNodePort = self.kv_message_instance.log_repair.clusterNodePort
+
+            try:
+                logRepairResponseSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            except:
+                print("ERROR : Socket creation failed.")
+                sys.exit(1)
+
+            # Connect client socket to server using 3 way handshake
+            try:
+                logRepairResponseSocket.connect((self.kv_message_instance.log_repair.leaderIp, self.kv_message_instance.log_repair.leaderPort))
+            except:
+                print("ERROR : Socket creation failed for ", self.kv_message_instance.append_entry_response.clusterNodePort)
+
+            # Send setup_connection message to cluster socket
+            data = KvLogCorrectionResponseMessage.SerializeToString()
+            size = encode_varint(len(data))
+            logRepairResponseSocket.sendall(size + data)
+            logRepairResponseSocket.close()
+
+        elif self.kv_message_instance.WhichOneof('key_value_message') == 'log_repair_response':
+            #if DEBUG_STDERR:
+            print("LogRepairResponse Message received from port --> ", self.kv_message_instance.log_repair_response.clusterNodePort, " as --> ",
+                      self.kv_message_instance.log_repair_response.repairResponse, file=sys.stderr)
+            # send log vect entry - one indx prior to previously sent entry if response is FAIL,
+            # if SUCCESSFUL - just remove clsuter's entry from globalRepairClusterNode - so that it can get heartbeat from leader
+            repairStatus = self.kv_message_instance.log_repair_response.repairResponse
+
+            if repairStatus == "SUCCESS":
+                print("repairStatus --> ", repairStatus, file=sys.stderr)
+                # get the name of cluster using it's ip and port
+                clusterName = ""
+                globalClusterInfoDictMutex.acquire()
+                for clusterKey, clusterVal in globalClusterInfoDict.items():
+                    if clusterVal.clusterIpAddress == self.kv_message_instance.log_repair_response.clusterNodeIp and clusterVal.clusterPortNumber == self.kv_message_instance.log_repair_response.clusterNodePort:
+                        clusterName = clusterVal.clusterName
+                        print("clusterName needs to be removed from globalRepairClusterNode -->", clusterName, file=sys.stderr)
+                        # Remove cluster's entry from globalRepairClusterNode so that it can get hearbeat message from leader
+                        globalRepairClusterNodeMutex.acquire()
+                        globalRepairClusterNode.remove(clusterName)
+                        globalRepairClusterNodeMutex.release()
+                globalClusterInfoDictMutex.release()
+            elif repairStatus == "FAIL":
+                # Send log from one index back
+                # Create log repair KeyValueMessage
+                indx = self.kv_message_instance.log_repair_response.indx
+                newIndx = indx - 1 if indx != 0 else 0
+
+                KvLogCorrectionMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+
+                globalLogVectMutex.acquire()
+                for indx in range(newIndx, len(globalLogVect)):
+                    addLogEntry(KvLogCorrectionMessage.log_repair.entry.add(), globalLogVect[indx])
+                globalLogVectMutex.release()
+
+                KvLogCorrectionMessage.log_repair.leaderIp = self.clusterIp
+                KvLogCorrectionMessage.log_repair.leaderPort = self.clusterPort
+                KvLogCorrectionMessage.log_repair.clusterNodeIp = self.kv_message_instance.append_entry_response.clusterNodeIp
+                KvLogCorrectionMessage.log_repair.clusterNodePort = self.kv_message_instance.append_entry_response.clusterNodePort
+
+                try:
+                    logRepairSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                except:
+                    print("ERROR : Socket creation failed.")
+                    sys.exit(1)
+
+                # Connect client socket to server using 3 way handshake
+                try:
+                    logRepairSocket.connect((self.kv_message_instance.append_entry_response.clusterNodeIp, self.kv_message_instance.append_entry_response.clusterNodePort))
+                except:
+                    print("ERROR : Socket creation failed for ", self.kv_message_instance.append_entry_response.clusterNodePort)
+
+                # Send setup_connection message to cluster socket
+                data = KvLogCorrectionMessage.SerializeToString()
+                size = encode_varint(len(data))
+                logRepairSocket.sendall(size + data)
+                logRepairSocket.close()
 
 
-# Class to represent Cluster Node Server
+
+        # Class to represent Cluster Node Server
 class ClusterNodeServer:
     ''' Class to represent Cluster Node Server '''
 

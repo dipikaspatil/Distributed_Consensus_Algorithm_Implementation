@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\x9a\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xe6\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\x12\x10\n\x08\x63lientIp\x18\n \x01(\t\x12\x12\n\nclientPort\x18\x0b \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xaf\x03\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
+  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\x9a\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xe6\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\x12\x10\n\x08\x63lientIp\x18\n \x01(\t\x12\x12\n\nclientPort\x18\x0b \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xda\x01\n\tLogRepair\x12\"\n\x05\x65ntry\x18\x01 \x03(\x0b\x32\x13.LogRepair.LogEntry\x12\x10\n\x08leaderIp\x18\x02 \x01(\t\x12\x12\n\nleaderPort\x18\x03 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x04 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x05 \x01(\r\x1aS\n\x08LogEntry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x8f\x01\n\x11LogRepairResponse\x12\x16\n\x0erepairResponse\x18\x01 \x01(\t\x12\x0c\n\x04indx\x18\x02 \x01(\x05\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x05 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x06 \x01(\r\"\x84\x04\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x12 \n\nlog_repair\x18\n \x01(\x0b\x32\n.LogRepairH\x00\x12\x31\n\x13log_repair_response\x18\x0b \x01(\x0b\x32\x12.LogRepairResponseH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
 )
 
 
@@ -705,6 +705,189 @@ _COMMITENTRY = _descriptor.Descriptor(
 )
 
 
+_LOGREPAIR_LOGENTRY = _descriptor.Descriptor(
+  name='LogEntry',
+  full_name='LogRepair.LogEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='transId', full_name='LogRepair.LogEntry.transId', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='key', full_name='LogRepair.LogEntry.key', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='LogRepair.LogEntry.value', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='term', full_name='LogRepair.LogEntry.term', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='indx', full_name='LogRepair.LogEntry.indx', index=4,
+      number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1412,
+  serialized_end=1495,
+)
+
+_LOGREPAIR = _descriptor.Descriptor(
+  name='LogRepair',
+  full_name='LogRepair',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='entry', full_name='LogRepair.entry', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderIp', full_name='LogRepair.leaderIp', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderPort', full_name='LogRepair.leaderPort', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodeIp', full_name='LogRepair.clusterNodeIp', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodePort', full_name='LogRepair.clusterNodePort', index=4,
+      number=5, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_LOGREPAIR_LOGENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1277,
+  serialized_end=1495,
+)
+
+
+_LOGREPAIRRESPONSE = _descriptor.Descriptor(
+  name='LogRepairResponse',
+  full_name='LogRepairResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='repairResponse', full_name='LogRepairResponse.repairResponse', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='indx', full_name='LogRepairResponse.indx', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderIp', full_name='LogRepairResponse.leaderIp', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='leaderPort', full_name='LogRepairResponse.leaderPort', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodeIp', full_name='LogRepairResponse.clusterNodeIp', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clusterNodePort', full_name='LogRepairResponse.clusterNodePort', index=5,
+      number=6, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1498,
+  serialized_end=1641,
+)
+
+
 _KEYVALUEMESSAGE = _descriptor.Descriptor(
   name='KeyValueMessage',
   full_name='KeyValueMessage',
@@ -775,6 +958,20 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='log_repair', full_name='KeyValueMessage.log_repair', index=9,
+      number=10, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='log_repair_response', full_name='KeyValueMessage.log_repair_response', index=10,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -790,8 +987,8 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       name='key_value_message', full_name='KeyValueMessage.key_value_message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1277,
-  serialized_end=1708,
+  serialized_start=1644,
+  serialized_end=2160,
 )
 
 _SETUPCONNECTION_CLUSTER.containing_type = _SETUPCONNECTION
@@ -802,6 +999,8 @@ _CLIENTREQUEST_GETREQUEST.containing_type = _CLIENTREQUEST
 _CLIENTREQUEST_PUTREQUEST.containing_type = _CLIENTREQUEST
 _CLIENTREQUEST.fields_by_name['get_request'].message_type = _CLIENTREQUEST_GETREQUEST
 _CLIENTREQUEST.fields_by_name['put_request'].message_type = _CLIENTREQUEST_PUTREQUEST
+_LOGREPAIR_LOGENTRY.containing_type = _LOGREPAIR
+_LOGREPAIR.fields_by_name['entry'].message_type = _LOGREPAIR_LOGENTRY
 _KEYVALUEMESSAGE.fields_by_name['setup_connection'].message_type = _SETUPCONNECTION
 _KEYVALUEMESSAGE.fields_by_name['start_election'].message_type = _STARTELECTION
 _KEYVALUEMESSAGE.fields_by_name['request_vote'].message_type = _REQUESTVOTE
@@ -811,6 +1010,8 @@ _KEYVALUEMESSAGE.fields_by_name['client_request'].message_type = _CLIENTREQUEST
 _KEYVALUEMESSAGE.fields_by_name['leader_response'].message_type = _LEADERRESPONSE
 _KEYVALUEMESSAGE.fields_by_name['append_entry_response'].message_type = _APPENDENTRYRESPONSE
 _KEYVALUEMESSAGE.fields_by_name['commit_entry'].message_type = _COMMITENTRY
+_KEYVALUEMESSAGE.fields_by_name['log_repair'].message_type = _LOGREPAIR
+_KEYVALUEMESSAGE.fields_by_name['log_repair_response'].message_type = _LOGREPAIRRESPONSE
 _KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
   _KEYVALUEMESSAGE.fields_by_name['setup_connection'])
 _KEYVALUEMESSAGE.fields_by_name['setup_connection'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
@@ -838,6 +1039,12 @@ _KEYVALUEMESSAGE.fields_by_name['append_entry_response'].containing_oneof = _KEY
 _KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
   _KEYVALUEMESSAGE.fields_by_name['commit_entry'])
 _KEYVALUEMESSAGE.fields_by_name['commit_entry'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['log_repair'])
+_KEYVALUEMESSAGE.fields_by_name['log_repair'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
+_KEYVALUEMESSAGE.oneofs_by_name['key_value_message'].fields.append(
+  _KEYVALUEMESSAGE.fields_by_name['log_repair_response'])
+_KEYVALUEMESSAGE.fields_by_name['log_repair_response'].containing_oneof = _KEYVALUEMESSAGE.oneofs_by_name['key_value_message']
 DESCRIPTOR.message_types_by_name['SetupConnection'] = _SETUPCONNECTION
 DESCRIPTOR.message_types_by_name['StartElection'] = _STARTELECTION
 DESCRIPTOR.message_types_by_name['RequestVote'] = _REQUESTVOTE
@@ -847,6 +1054,8 @@ DESCRIPTOR.message_types_by_name['ClientRequest'] = _CLIENTREQUEST
 DESCRIPTOR.message_types_by_name['LeaderResponse'] = _LEADERRESPONSE
 DESCRIPTOR.message_types_by_name['AppendEntryResponse'] = _APPENDENTRYRESPONSE
 DESCRIPTOR.message_types_by_name['CommitEntry'] = _COMMITENTRY
+DESCRIPTOR.message_types_by_name['LogRepair'] = _LOGREPAIR
+DESCRIPTOR.message_types_by_name['LogRepairResponse'] = _LOGREPAIRRESPONSE
 DESCRIPTOR.message_types_by_name['KeyValueMessage'] = _KEYVALUEMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -944,6 +1153,28 @@ CommitEntry = _reflection.GeneratedProtocolMessageType('CommitEntry', (_message.
   # @@protoc_insertion_point(class_scope:CommitEntry)
   ))
 _sym_db.RegisterMessage(CommitEntry)
+
+LogRepair = _reflection.GeneratedProtocolMessageType('LogRepair', (_message.Message,), dict(
+
+  LogEntry = _reflection.GeneratedProtocolMessageType('LogEntry', (_message.Message,), dict(
+    DESCRIPTOR = _LOGREPAIR_LOGENTRY,
+    __module__ = 'KeyValueClusterStore_pb2'
+    # @@protoc_insertion_point(class_scope:LogRepair.LogEntry)
+    ))
+  ,
+  DESCRIPTOR = _LOGREPAIR,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:LogRepair)
+  ))
+_sym_db.RegisterMessage(LogRepair)
+_sym_db.RegisterMessage(LogRepair.LogEntry)
+
+LogRepairResponse = _reflection.GeneratedProtocolMessageType('LogRepairResponse', (_message.Message,), dict(
+  DESCRIPTOR = _LOGREPAIRRESPONSE,
+  __module__ = 'KeyValueClusterStore_pb2'
+  # @@protoc_insertion_point(class_scope:LogRepairResponse)
+  ))
+_sym_db.RegisterMessage(LogRepairResponse)
 
 KeyValueMessage = _reflection.GeneratedProtocolMessageType('KeyValueMessage', (_message.Message,), dict(
   DESCRIPTOR = _KEYVALUEMESSAGE,
