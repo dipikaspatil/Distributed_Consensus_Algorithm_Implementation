@@ -8,7 +8,7 @@ import threading
 from pathlib import Path
 from constants import *
 
-sys.path.append('/home/dipika_patil_linux/Downloads/protobuf-3.7.0/python')
+sys.path.append('/Users/mishra.nitesh/Downloads/_Coding_MISC/Installations/protobuf-3.7.0/python')
 import KeyValueClusterStore_pb2
 from google.protobuf.internal.encoder import _VarintEncoder
 from google.protobuf.internal.decoder import _DecodeVarint
@@ -782,8 +782,9 @@ class keyValueClusterStore(threading.Thread):
                 if startIndx == -1:
                     startIndx = indx
                 if counter == 1 and len(globalLogVect) > indx:
+                    counter = 0
                     if indx != 0 and globalLogVect[indx].indx != indx: # if log correction reaches to 0th index - simply correct log. Else need to break and send for log one prior
-                        break;
+                        break
                 # if code reaches here - need to correct all logs
                 status = True
                 if len(globalLogVect) > indx:
@@ -816,7 +817,7 @@ class keyValueClusterStore(threading.Thread):
                             break
                         lineNum += 1
                     if not commit:
-                        lines.append(str(key) + ':' + entry.value + '\n')
+                        lines.append(str(entry.key) + ':' + entry.value + '\n')
                         #out = open("./" + self.persistentFileName, "a")
                         #out.write(str(entry.key) + ":" + entry.value + '\n')
                         #out.close()
@@ -912,8 +913,7 @@ class keyValueClusterStore(threading.Thread):
                 logRepairSocket.close()
 
 
-
-        # Class to represent Cluster Node Server
+# Class to represent Cluster Node Server
 class ClusterNodeServer:
     ''' Class to represent Cluster Node Server '''
 
