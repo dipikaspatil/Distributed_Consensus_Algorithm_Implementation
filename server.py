@@ -8,7 +8,7 @@ import threading
 from pathlib import Path
 from constants import *
 
-sys.path.append('/Users/mishra.nitesh/Downloads/_Coding_MISC/Installations/protobuf-3.7.0/python')
+sys.path.append('/home/dipika_patil_linux/Downloads/protobuf-3.7.0/python')
 import KeyValueClusterStore_pb2
 from google.protobuf.internal.encoder import _VarintEncoder
 from google.protobuf.internal.decoder import _DecodeVarint
