@@ -405,7 +405,7 @@ class keyValueClusterStore(threading.Thread):
 
                             globalClusterInfoDictMutex.acquire()
                             # Create message - request vote and send to all servers
-                            print("len(globalClusterInfoDict) -->", len(globalClusterInfoDict), file=sys.stderr)
+                            #print("len(globalClusterInfoDict) -->", len(globalClusterInfoDict), file=sys.stderr)
                             for clusterKey, clusterVal in globalClusterInfoDict.items():
                                 globalRepairClusterNodeMutex.acquire()
                                 # If any cluster node's log is getting repaired - don't send heartbeat to that server
@@ -413,7 +413,7 @@ class keyValueClusterStore(threading.Thread):
                                     globalRepairClusterNodeMutex.release()
                                     continue
                                 globalRepairClusterNodeMutex.release()
-                                print(cntr, "Leader ", self.clusterName, "Sending Heartbeat Message to -->", clusterVal.clusterName, file=sys.stderr)
+                                print(cntr, "Leader", self.clusterName, "Sending Heartbeat Message to -->", clusterVal.clusterName, file=sys.stderr)
                                 # Create client socket IPv4 and TCP
                                 try:
                                     heartBeatSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -500,12 +500,10 @@ class keyValueClusterStore(threading.Thread):
                             response = True
                             if globalLogVect[len(globalLogVect) - 1].indx != reqIndx:
                                 sendResponse = True
-                                print("HELLO HEARTBEAT_MESSAGE_1", file=sys.stderr)
                                 globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
                     else:
                         sendResponse = True
                         response = True
-                        print("HELLO HEARTBEAT_MESSAGE_2", file=sys.stderr)
                         globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
                 globalLogVectMutex.release()
 
@@ -596,7 +594,6 @@ class keyValueClusterStore(threading.Thread):
                     #print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, " ) into it's Log", file=sys.stderr)
                     obj = Log(reqTransId, reqKey, reqValue, globalTerm, len(globalLogVect))
                     #print("len(globalLogVect) -->", len(globalLogVect) , file=sys.stderr)
-                    print("HELLO CLIENT_REQUEST_PUT", file=sys.stderr)
                     globalLogVect.append(obj)
                     out = open("./" + self.logFileName, "a")
                     out.write(str(obj.transId) + ":" + str(obj.key) + ":" + str(obj.value) + ":" + str(obj.term) + ":" + str(obj.indx) + '\n')
@@ -835,7 +832,6 @@ class keyValueClusterStore(threading.Thread):
                 if len(globalLogVect) > indx:
                     globalLogVect[indx] = Log(entry.transId, entry.key, entry.value, entry.term, entry.indx)
                 else:
-                    print("HELLO LOG_REPAIR", file=sys.stderr)
                     globalLogVect.append(Log(entry.transId, entry.key, entry.value, entry.term, entry.indx))
                     #lines.append(str(entry.transId) + ":" + str(entry.key) + ":" + str(entry.value) + ":" + str(entry.term) + ":" + str(entry.indx) + "\n")
             globalLogVectMutex.release()
@@ -863,30 +859,6 @@ class keyValueClusterStore(threading.Thread):
                 # Successful log repair
                 KvLogCorrectionResponseMessage.log_repair_response.repairResponse = "SUCCESS"
                 # Commit entries into persistent storage
-                '''for entry in self.kv_message_instance.log_repair.entry:
-                    fo = open("./" + self.persistentFileName, "r")
-                    lines = fo.readlines()
-                    lineNum = 0
-                    commit = False
-                    for line in lines:
-                        dataList = str(line).split(':')
-                        key = dataList[0]
-                        value = dataList[1]
-                        #print("key -->", key, " type -->", type(key), " clientReqKey -->", self.kv_message_instance.commit_entry.key, " type -->",
-                         #     type(self.kv_message_instance.commit_entry.key), file=sys.stderr)
-                        if int(key) == entry.key:
-                            # print("inside if-->")
-                            lines[lineNum] = str(key) + ':' + entry.value + '\n'
-                            commit = True
-                            break
-                        lineNum += 1
-                    if not commit:
-                        lines.append(str(entry.key) + ':' + entry.value + '\n')
-                        #out = open("./" + self.persistentFileName, "a")
-                        #out.write(str(entry.key) + ":" + entry.value + '\n')
-                        #out.close()
-                    #else:
-                '''
                 fo = open("./" + self.persistentFileName, "r")
                 lines = fo.readlines()
                 lineNum = 0
@@ -1019,7 +991,6 @@ class ClusterNodeServer:
             globalLogVectMutex.acquire()
             for line in lines:
                 entry = str(line).split(':')
-                print("HELLO INIT", file=sys.stderr)
                 globalLogVect.append(Log(int(entry[0]), int(entry[1]), entry[2], int(entry[3]), int(entry[4])))
             globalLogVectMutex.release()
         else:
@@ -1043,7 +1014,7 @@ class ClusterNodeServer:
             sys.exit(1)
 
         print("\n----------------------------------------------------------------------------------------------------", file=sys.stderr)
-        print("Key Value Cluster Node Server Information : \n----------------------------", file=sys.stderr)
+        print("Key Value Cluster Node Server Information : \n--------------------------------------------------------", file=sys.stderr)
         print("Cluster Node Server Name :::::::::::::::::::::::::: \t", self.cName, file=sys.stderr)
         print("Cluster Node Server IP Address :::::::::::::::::::: \t", self.cIp, file=sys.stderr)
         print("Cluster Node Server Port Number ::::::::::::::::::: \t", self.cPort, file=sys.stderr)
