@@ -1,5 +1,6 @@
 #!usr/bin/python3
 
+import os
 import sys
 import time
 import random
@@ -86,6 +87,10 @@ globalRepairClusterNode = set()
 # Mutex to prevent globalRepairClusterNode
 globalRepairClusterNodeMutex = threading.Lock()
 
+# SET to store repair cluster node
+globalLastEntryCommitted = "YES"
+# Mutex to prevent globalRepairClusterNode
+globalLastEntryCommittedMutex = threading.Lock()
 
 # Class to monitor client request
 class ClientRequest:
@@ -144,10 +149,12 @@ class keyValueClusterStore(threading.Thread):
         self.clusterPort = cPortIn
         self.kv_message_instance = KeyValueClusterStore_pb2.KeyValueMessage()
         self.persistentFileName = cNameIn + "_file.txt"
+        self.logFileName = cNameIn + "_log_file.log"
+
 
     # Method (run) works as entry point for each thread - overridden from threading.Thread
     def run(self):
-        global globalElectionTimer, globalTerm, globalClusterState, globalTermVoted, globalTermVoteCount, isGlobalElectionTimerChanged, globalClientRequestDict
+        global globalElectionTimer, globalTerm, globalClusterState, globalTermVoted, globalTermVoteCount, isGlobalElectionTimerChanged, globalClientRequestDict, globalLastEntryCommitted
 
         # Identify message type here by parsing incoming socket message
         data = self.incomingSocket.recv(1)
@@ -164,10 +171,8 @@ class keyValueClusterStore(threading.Thread):
                     continue
                 globalClusterInfoDict[i] = ClusterInfo(cluster.name, cluster.ip, cluster.port)
                 i += 1
-            # Create empty file - if not already available
-            Path(self.persistentFileName).touch()
-            self.incomingSocket.close()
 
+            self.incomingSocket.close()
             if DEBUG_STDERR:
                 print("Elements of Global Replica Info Dictionary --> ", file=sys.stderr)
                 for cKey, cVal in globalClusterInfoDict.items():
@@ -345,7 +350,7 @@ class keyValueClusterStore(threading.Thread):
                 voteCount = globalTermVoteCount[globalTerm]
                 globalTermVoteCountMutex.release()
 
-                if voteCount == MAJORITY_CLUSTER_COUNT:
+                if voteCount == MAJORITY_CLUSTER_COUNT and globalClusterState != "Leader":
                     # Elect oneself as leader and send heartbeat message to all - keep sending it on regular interval - 100ms
                     # Change current state to Candidate
                     globalClusterStateMutex.acquire()
@@ -357,76 +362,81 @@ class keyValueClusterStore(threading.Thread):
                         print("MSG : ", self.clusterName, " has changed it's state to ", globalClusterState, " for term ", globalTerm, file=sys.stderr)
                     globalClusterStateMutex.release()
 
-                # Send heartbeat_message to all servers
-                counter = 0
-                while True:
-                    # globalIsCNodeLeaderMutex.acquire()
-                    if globalClusterState == "Leader":
-                        counter += 1
-                        globalElectionTimerMutex.acquire()
-                        globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
-                        globalElectionTimer = globalElectionTimer / 100
-                        isGlobalElectionTimerChangedMutex.acquire()
-                        isGlobalElectionTimerChanged = True
-                        isGlobalElectionTimerChangedMutex.release()
-                        if DEBUG_STDERR:
-                            print("Leader Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
-                        globalElectionTimerMutex.release()
+                    # Send heartbeat_message to all servers
+                    cntr = 0
+                    while True:
+                        # globalIsCNodeLeaderMutex.acquire()
+                        if globalClusterState == "Leader":
+                            cntr += 1
+                            globalElectionTimerMutex.acquire()
+                            globalElectionTimer = random.randrange(ELECTION_TIMER_MIN, ELECTION_TIMER_MAX)
+                            globalElectionTimer = globalElectionTimer / 100
+                            isGlobalElectionTimerChangedMutex.acquire()
+                            isGlobalElectionTimerChanged = True
+                            isGlobalElectionTimerChangedMutex.release()
+                            if DEBUG_STDERR:
+                                print("Leader Cluster Node Server Current Election Timeout reset to : \t", globalElectionTimer, file=sys.stderr)
+                            globalElectionTimerMutex.release()
 
-                        # Create KeyValueMessage object and wrap setup_connection object inside it
-                        KvHeartBeatMessage = KeyValueClusterStore_pb2.KeyValueMessage()
-                        KvHeartBeatMessage.heartbeat_message.term = globalTerm
-                        KvHeartBeatMessage.heartbeat_message.clusterName = self.clusterName
+                            # Create KeyValueMessage object and wrap setup_connection object inside it
+                            KvHeartBeatMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+                            KvHeartBeatMessage.heartbeat_message.term = globalTerm
+                            KvHeartBeatMessage.heartbeat_message.clusterName = self.clusterName
 
-                        # Get the last entry from globalLogVect
-                        globalLogVectMutex.acquire()
-                        if len(globalLogVect):
-                            # print("leader - log vect length --> ", len(globalLogVect), file=sys.stderr)
-                            logObj = globalLogVect[len(globalLogVect) - 1]
-                            # print(logObj, file=sys.stderr)
-                            KvHeartBeatMessage.heartbeat_message.entry.key = logObj.key
-                            KvHeartBeatMessage.heartbeat_message.entry.value = logObj.value
-                            KvHeartBeatMessage.heartbeat_message.entry.term = logObj.term
-                            KvHeartBeatMessage.heartbeat_message.entry.indx = logObj.indx
-                            KvHeartBeatMessage.heartbeat_message.leaderIp = self.clusterIp
-                            KvHeartBeatMessage.heartbeat_message.leaderPort = self.clusterPort
-                        else:
-                            KvHeartBeatMessage.heartbeat_message.entry.indx = -1
-                        globalLogVectMutex.release()
+                            # Get the last entry from globalLogVect
+                            globalLogVectMutex.acquire()
+                            if len(globalLogVect):
+                                # print("leader - log vect length --> ", len(globalLogVect), file=sys.stderr)
+                                logObj = globalLogVect[len(globalLogVect) - 1]
+                                # print(logObj, file=sys.stderr)
+                                KvHeartBeatMessage.heartbeat_message.entry.transId = logObj.transId
+                                KvHeartBeatMessage.heartbeat_message.entry.key = logObj.key
+                                KvHeartBeatMessage.heartbeat_message.entry.value = logObj.value
+                                KvHeartBeatMessage.heartbeat_message.entry.term = logObj.term
+                                KvHeartBeatMessage.heartbeat_message.entry.indx = logObj.indx
+                                KvHeartBeatMessage.heartbeat_message.leaderIp = self.clusterIp
+                                KvHeartBeatMessage.heartbeat_message.leaderPort = self.clusterPort
+                                globalLastEntryCommittedMutex.acquire()
+                                KvHeartBeatMessage.heartbeat_message.isLastEntryCommited = globalLastEntryCommitted
+                                globalLastEntryCommittedMutex.release()
+                            else:
+                                KvHeartBeatMessage.heartbeat_message.entry.indx = -1
+                            globalLogVectMutex.release()
 
-                        globalClusterInfoDictMutex.acquire()
-                        # Create message - request vote and send to all servers
-                        for clusterKey, clusterVal in globalClusterInfoDict.items():
-                            globalRepairClusterNodeMutex.acquire()
-                            # If any cluster node's log is getting repaired - don't send heartbeat to that server
-                            if clusterVal.clusterName in globalRepairClusterNode:
+                            globalClusterInfoDictMutex.acquire()
+                            # Create message - request vote and send to all servers
+                            print("len(globalClusterInfoDict) -->", len(globalClusterInfoDict), file=sys.stderr)
+                            for clusterKey, clusterVal in globalClusterInfoDict.items():
+                                globalRepairClusterNodeMutex.acquire()
+                                # If any cluster node's log is getting repaired - don't send heartbeat to that server
+                                if clusterVal.clusterName in globalRepairClusterNode:
+                                    globalRepairClusterNodeMutex.release()
+                                    continue
                                 globalRepairClusterNodeMutex.release()
-                                continue
-                            globalRepairClusterNodeMutex.release()
-                            print(counter, "Leader ", self.clusterName, "Sending Heartbeat Message to -->", clusterVal.clusterName, file=sys.stderr)
-                            # Create client socket IPv4 and TCP
-                            try:
-                                heartBeatSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                            except:
-                                print("ERROR : Socket creation failed.")
-                                sys.exit(1)
+                                print(cntr, "Leader ", self.clusterName, "Sending Heartbeat Message to -->", clusterVal.clusterName, file=sys.stderr)
+                                # Create client socket IPv4 and TCP
+                                try:
+                                    heartBeatSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                except:
+                                    print("ERROR : Socket creation failed.")
+                                    sys.exit(1)
 
-                            # Connect client socket to server using 3 way handshake
-                            try:
-                                heartBeatSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
-                            except:
-                                # print("ERROR : Socket creation failed for ", clusterVal.clusterName)
-                                continue
-                            # Send setup_connection message to cluster socket
-                            data = KvHeartBeatMessage.SerializeToString()
-                            size = encode_varint(len(data))
-                            heartBeatSocket.sendall(size + data)
-                            heartBeatSocket.close()
-                        globalClusterInfoDictMutex.release()
-                    else:
-                        break
-                    # globalIsCNodeLeaderMutex.release()
-                    time.sleep(HEARTBEAT_TIME)
+                                # Connect client socket to server using 3 way handshake
+                                try:
+                                    heartBeatSocket.connect((clusterVal.clusterIpAddress, int(clusterVal.clusterPortNumber)))
+                                except:
+                                    # print("ERROR : Socket creation failed for ", clusterVal.clusterName)
+                                    continue
+                                # Send setup_connection message to cluster socket
+                                data = KvHeartBeatMessage.SerializeToString()
+                                size = encode_varint(len(data))
+                                heartBeatSocket.sendall(size + data)
+                                heartBeatSocket.close()
+                            globalClusterInfoDictMutex.release()
+                        else:
+                            break
+                        # globalIsCNodeLeaderMutex.release()
+                        time.sleep(HEARTBEAT_TIME)
         elif self.kv_message_instance.WhichOneof('key_value_message') == 'heartbeat_message':
             if DEBUG_STDERR:
                 print("Heartbeat Message received from leader --> ", self.kv_message_instance.heartbeat_message.clusterName, " for term ",
@@ -459,7 +469,10 @@ class keyValueClusterStore(threading.Thread):
             # Check the log
             # Get last entry of globalLogVect
             if considerLog:
+                reqEntryCommitted = self.kv_message_instance.heartbeat_message.isLastEntryCommited
+
                 response = True
+                sendResponse = False
                 # for entry in self.kv_message_instance.append_entry:
                 reqTransId = self.kv_message_instance.heartbeat_message.entry.transId
                 reqKey = self.kv_message_instance.heartbeat_message.entry.key
@@ -468,22 +481,39 @@ class keyValueClusterStore(threading.Thread):
                 reqIndx = self.kv_message_instance.heartbeat_message.entry.indx
 
                 globalLogVectMutex.acquire()
-                if DEBUG_STDERR:
-                    print("len(globalLogVect) --> ", len(globalLogVect), file=sys.stderr)
-                if len(globalLogVect):
-                    # Create KeyValueMessage object and wrap setup_connection object inside it
-                    if len(globalLogVect) > reqIndx:
-                        if globalLogVect[reqIndx].indx != reqIndx:
-                            response = False
-                    elif globalLogVect[len(globalLogVect) - 1].indx != (reqIndx - 1):
+                # If entry is committed at leader's end - simply check last entry from leader
+                if reqEntryCommitted == "YES":
+                    if len(globalLogVect) == 0 or globalLogVect[len(globalLogVect) - 1].indx != reqIndx:
                         response = False
-                    else:
-                        response = True
-                        globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
+                        sendResponse = True
                 else:
-                    response = True
-                    globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
+                    if len(globalLogVect):
+                        # Create KeyValueMessage object and wrap setup_connection object inside it
+                        if len(globalLogVect) > reqIndx:
+                            if globalLogVect[reqIndx].indx != reqIndx:
+                                sendResponse = True
+                                response = False
+                        elif globalLogVect[len(globalLogVect) - 1].indx != (reqIndx - 1):
+                            sendResponse = True
+                            response = False
+                        else:
+                            response = True
+                            if globalLogVect[len(globalLogVect) - 1].indx != reqIndx:
+                                sendResponse = True
+                                print("HELLO HEARTBEAT_MESSAGE_1", file=sys.stderr)
+                                globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
+                    else:
+                        sendResponse = True
+                        response = True
+                        print("HELLO HEARTBEAT_MESSAGE_2", file=sys.stderr)
+                        globalLogVect.append(Log(reqTransId, reqKey, reqValue, reqTerm, reqIndx))
                 globalLogVectMutex.release()
+
+                # Add log entry into persistent storage
+                if sendResponse and response:
+                    out = open("./" + self.logFileName, "a")
+                    out.write(str(reqTransId) + ":" + str(reqKey) + ":" + str(reqValue) + ":" + str(reqTerm) + ":" + str(reqIndx) + '\n')
+                    out.close()
 
                 # Send HeartBeat Response Message
                 # If log is not appended and response is FAIL
@@ -493,34 +523,35 @@ class keyValueClusterStore(threading.Thread):
                     globalRepairClusterNode.add(self.clusterName)
                     globalRepairClusterNodeMutex.release()
 
-                reqLeaderIp = self.kv_message_instance.heartbeat_message.leaderIp
-                reqLeaderPort = self.kv_message_instance.heartbeat_message.leaderPort
+                if sendResponse:
+                    reqLeaderIp = self.kv_message_instance.heartbeat_message.leaderIp
+                    reqLeaderPort = self.kv_message_instance.heartbeat_message.leaderPort
 
-                KvHeartBeatResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
+                    KvHeartBeatResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
 
-                KvHeartBeatResponseMessage.append_entry_response.transId = reqTransId
-                KvHeartBeatResponseMessage.append_entry_response.key = reqKey
-                KvHeartBeatResponseMessage.append_entry_response.value = reqValue
-                KvHeartBeatResponseMessage.append_entry_response.indx = reqIndx
-                KvHeartBeatResponseMessage.append_entry_response.message = "FAIL" if not response else "SUCCESS"
-                KvHeartBeatResponseMessage.append_entry_response.clusterNodeIp = self.clusterIp
-                KvHeartBeatResponseMessage.append_entry_response.clusterNodePort = self.clusterPort
-                KvHeartBeatResponseMessage.append_entry_response.clusterNodeName = self.clusterName
-                # KvHeartBeatResponseMessage.append_entry_response.clientIp = globalLogVect
-                # KvHeartBeatResponseMessage.append_entry_response.clientPort =
-                try:
-                    heartBeatResponseSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                except:
-                    print("ERROR : Socket creation failed.")
-                    sys.exit(1)
+                    KvHeartBeatResponseMessage.append_entry_response.transId = reqTransId
+                    KvHeartBeatResponseMessage.append_entry_response.key = reqKey
+                    KvHeartBeatResponseMessage.append_entry_response.value = reqValue
+                    KvHeartBeatResponseMessage.append_entry_response.indx = reqIndx
+                    KvHeartBeatResponseMessage.append_entry_response.message = "FAIL" if not response else "SUCCESS"
+                    KvHeartBeatResponseMessage.append_entry_response.clusterNodeIp = self.clusterIp
+                    KvHeartBeatResponseMessage.append_entry_response.clusterNodePort = self.clusterPort
+                    KvHeartBeatResponseMessage.append_entry_response.clusterNodeName = self.clusterName
+                    # KvHeartBeatResponseMessage.append_entry_response.clientIp = globalLogVect
+                    # KvHeartBeatResponseMessage.append_entry_response.clientPort =
+                    try:
+                        heartBeatResponseSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    except:
+                        print("ERROR : Socket creation failed.")
+                        sys.exit(1)
 
-                # Connect client socket to server using 3 way handshake
-                heartBeatResponseSocket.connect((reqLeaderIp, reqLeaderPort))
-                # Send setup_connection message to cluster socket
-                data = KvHeartBeatResponseMessage.SerializeToString()
-                size = encode_varint(len(data))
-                heartBeatResponseSocket.sendall(size + data)
-                heartBeatResponseSocket.close()
+                    # Connect client socket to server using 3 way handshake
+                    heartBeatResponseSocket.connect((reqLeaderIp, reqLeaderPort))
+                    # Send setup_connection message to cluster socket
+                    data = KvHeartBeatResponseMessage.SerializeToString()
+                    size = encode_varint(len(data))
+                    heartBeatResponseSocket.sendall(size + data)
+                    heartBeatResponseSocket.close()
 
         elif self.kv_message_instance.WhichOneof('key_value_message') == 'client_request':
 
@@ -540,8 +571,12 @@ class keyValueClusterStore(threading.Thread):
                 clientSocket.close()
             else:
                 requestType = self.kv_message_instance.client_request.request_type
-
                 if requestType == "PUT":
+
+                    globalLastEntryCommittedMutex.acquire()
+                    globalLastEntryCommitted = "NO"
+                    globalLastEntryCommittedMutex.release()
+
                     reqTransId = self.kv_message_instance.client_request.transId
                     reqKey = self.kv_message_instance.client_request.put_request.key
                     reqValue = self.kv_message_instance.client_request.put_request.value
@@ -554,12 +589,18 @@ class keyValueClusterStore(threading.Thread):
                     globalLogVectMutex.acquire()
                     # Add the entry into Client Request dictionary with majority log write count - 1
                     globalClientRequestDictMutex.acquire()
-                    print("globalClientRequestDictMutex acquired", file=sys.stderr)
-                    print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, ") into it's globalClientRequestDict with vote count 1", file=sys.stderr)
+                    #print("globalClientRequestDictMutex acquired", file=sys.stderr)
+                    #print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, ") into it's globalClientRequestDict with vote count 1", file=sys.stderr)
                     globalClientRequestDict[reqKey] = ClientRequest(reqTransId, reqKey, 1, reqSocket, "PUT")
                     globalClientRequestDictMutex.release()
-                    print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, " ) into it's Log", file=sys.stderr)
-                    globalLogVect.append(Log(reqTransId, reqKey, reqValue, globalTerm, len(globalLogVect)))
+                    #print("Leader -->", self.clusterName, " adding entry (", reqKey, " , ", reqValue, " ) into it's Log", file=sys.stderr)
+                    obj = Log(reqTransId, reqKey, reqValue, globalTerm, len(globalLogVect))
+                    #print("len(globalLogVect) -->", len(globalLogVect) , file=sys.stderr)
+                    print("HELLO CLIENT_REQUEST_PUT", file=sys.stderr)
+                    globalLogVect.append(obj)
+                    out = open("./" + self.logFileName, "a")
+                    out.write(str(obj.transId) + ":" + str(obj.key) + ":" + str(obj.value) + ":" + str(obj.term) + ":" + str(obj.indx) + '\n')
+                    out.close()
                     globalLogVectMutex.release()
                 elif requestType == "GET":
                     clientReqTransId = self.kv_message_instance.client_request.transId
@@ -698,6 +739,10 @@ class keyValueClusterStore(threading.Thread):
                         commitEntrySocket.sendall(size + data)
                         commitEntrySocket.close()
                     globalClusterInfoDictMutex.release()
+                    # Mark that last entry is committed at leader's end
+                    globalLastEntryCommittedMutex.acquire()
+                    globalLastEntryCommitted = "YES"
+                    globalLastEntryCommittedMutex.release()
             elif clientReqMessage == "FAIL":
                 #if DEBUG_STDERR:
                 print("AppendEntryResponse FAIL Message received from --> ", self.kv_message_instance.append_entry_response.clusterNodeName, " for indx ",
@@ -790,8 +835,27 @@ class keyValueClusterStore(threading.Thread):
                 if len(globalLogVect) > indx:
                     globalLogVect[indx] = Log(entry.transId, entry.key, entry.value, entry.term, entry.indx)
                 else:
+                    print("HELLO LOG_REPAIR", file=sys.stderr)
                     globalLogVect.append(Log(entry.transId, entry.key, entry.value, entry.term, entry.indx))
+                    #lines.append(str(entry.transId) + ":" + str(entry.key) + ":" + str(entry.value) + ":" + str(entry.term) + ":" + str(entry.indx) + "\n")
             globalLogVectMutex.release()
+
+            # Correct log file
+            if status:
+                fo = open("./" + self.logFileName, "r")
+                lines = fo.readlines()
+                lineNum = 0
+                globalLogVectMutex.acquire()
+                for entry in globalLogVect:
+                    if len(lines) > lineNum:
+                        lines[lineNum] = str(entry.transId) + ":" + str(entry.key) + ":" + str(entry.value) + ":" + str(entry.term) + ":" + str(entry.indx) + "\n"
+                    else:
+                        lines.append(str(entry.transId) + ":" + str(entry.key) + ":" + str(entry.value) + ":" + str(entry.term) + ":" + str(entry.indx) + "\n")
+                    lineNum += 1
+                globalLogVectMutex.release()
+                out = open("./" + self.logFileName, "w")
+                out.writelines(lines)
+                out.close()
 
             # Create log repair response message
             KvLogCorrectionResponseMessage = KeyValueClusterStore_pb2.KeyValueMessage()
@@ -799,7 +863,7 @@ class keyValueClusterStore(threading.Thread):
                 # Successful log repair
                 KvLogCorrectionResponseMessage.log_repair_response.repairResponse = "SUCCESS"
                 # Commit entries into persistent storage
-                for entry in self.kv_message_instance.log_repair.entry:
+                '''for entry in self.kv_message_instance.log_repair.entry:
                     fo = open("./" + self.persistentFileName, "r")
                     lines = fo.readlines()
                     lineNum = 0
@@ -822,6 +886,19 @@ class keyValueClusterStore(threading.Thread):
                         #out.write(str(entry.key) + ":" + entry.value + '\n')
                         #out.close()
                     #else:
+                '''
+                fo = open("./" + self.persistentFileName, "r")
+                lines = fo.readlines()
+                lineNum = 0
+                globalLogVectMutex.acquire()
+                for entry in globalLogVect:
+                    if len(lines) > lineNum:
+                        lines[lineNum] = str(entry.key) + ":" + entry.value + '\n'
+                    else:
+                        lines.append(str(entry.key) + ":" + entry.value + '\n')
+                    lineNum += 1
+                globalLogVectMutex.release()
+
                 out = open("./" + self.persistentFileName, "w")
                 out.writelines(lines)
                 out.close()
@@ -913,7 +990,8 @@ class keyValueClusterStore(threading.Thread):
                 logRepairSocket.close()
 
 
-# Class to represent Cluster Node Server
+
+        # Class to represent Cluster Node Server
 class ClusterNodeServer:
     ''' Class to represent Cluster Node Server '''
 
@@ -924,12 +1002,35 @@ class ClusterNodeServer:
         self.cBacklogCount = 100
         self.cPort = argClusterServerPortIn
         self.cthreadList = []  # holds total active thread
+        self.persistentFileName = argClusterServerNameIn + "_file.txt"
+        self.logFileName = argClusterServerNameIn + "_log_file.log"
         # Create server socket (IPv4 and TCP)
         try:
             self.cSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except:
             print("ERROR : Socket creation failed.")
             sys.exit(1)
+
+        # If log file already exist fill the values of file in globalLogVect
+        exists = os.path.isfile("./" + self.logFileName)
+        if exists:
+            fo = open("./" + self.logFileName, "r")
+            lines = fo.readlines()
+            globalLogVectMutex.acquire()
+            for line in lines:
+                entry = str(line).split(':')
+                print("HELLO INIT", file=sys.stderr)
+                globalLogVect.append(Log(int(entry[0]), int(entry[1]), entry[2], int(entry[3]), int(entry[4])))
+            globalLogVectMutex.release()
+        else:
+            Path(self.logFileName).touch()
+
+        existsFile = os.path.isfile("./" + self.persistentFileName)
+        if not existsFile:
+            # Create empty file - if not already available
+            Path(self.persistentFileName).touch()
+
+
 
     # Bind cluster node socket with given port
     def startCluster(self):

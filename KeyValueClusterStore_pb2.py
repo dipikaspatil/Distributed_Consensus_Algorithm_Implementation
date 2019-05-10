@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\x9a\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xe6\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\x12\x10\n\x08\x63lientIp\x18\n \x01(\t\x12\x12\n\nclientPort\x18\x0b \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xda\x01\n\tLogRepair\x12\"\n\x05\x65ntry\x18\x01 \x03(\x0b\x32\x13.LogRepair.LogEntry\x12\x10\n\x08leaderIp\x18\x02 \x01(\t\x12\x12\n\nleaderPort\x18\x03 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x04 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x05 \x01(\r\x1aS\n\x08LogEntry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x8f\x01\n\x11LogRepairResponse\x12\x16\n\x0erepairResponse\x18\x01 \x01(\t\x12\x0c\n\x04indx\x18\x02 \x01(\x05\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x05 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x06 \x01(\r\"\x84\x04\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x12 \n\nlog_repair\x18\n \x01(\x0b\x32\n.LogRepairH\x00\x12\x31\n\x13log_repair_response\x18\x0b \x01(\x0b\x32\x12.LogRepairResponseH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
+  serialized_pb=_b('\n\x1aKeyValueClusterStore.proto\"t\n\x0fSetupConnection\x12.\n\x0c\x61ll_clusters\x18\x02 \x03(\x0b\x32\x18.SetupConnection.Cluster\x1a\x31\n\x07\x43luster\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\x12\x0c\n\x04port\x18\x03 \x01(\r\"*\n\rStartElection\x12\x0b\n\x03src\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\"X\n\x0bRequestVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x11\n\tclusterIp\x18\x03 \x01(\t\x12\x13\n\x0b\x63lusterPort\x18\x04 \x01(\r\"E\n\x0cResponseVote\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x12\n\nvoteStatus\x18\x02 \x01(\t\x12\x13\n\x0b\x63lusterName\x18\x03 \x01(\t\"\xb7\x02\n\x10HeartBeatMessage\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63lusterName\x18\x02 \x01(\t\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12-\n\x05\x65ntry\x18\x05 \x01(\x0b\x32\x1e.HeartBeatMessage.append_entry\x12\x0f\n\x07msgType\x18\x06 \x01(\t\x12\x10\n\x08\x63lientIp\x18\x07 \x01(\t\x12\x12\n\nclinetPort\x18\x08 \x01(\r\x12\x1b\n\x13isLastEntryCommited\x18\t \x01(\t\x1aW\n\x0c\x61ppend_entry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x81\x02\n\rClientRequest\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12.\n\x0bget_request\x18\x03 \x01(\x0b\x32\x19.ClientRequest.GetRequest\x12.\n\x0bput_request\x18\x04 \x01(\x0b\x32\x19.ClientRequest.PutRequest\x12\x10\n\x08\x63lientIp\x18\x05 \x01(\t\x12\x12\n\nclientPort\x18\x06 \x01(\r\x1a\x19\n\nGetRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x1a(\n\nPutRequest\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"d\n\x0eLeaderResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\"\xe6\x01\n\x13\x41ppendEntryResponse\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x14\n\x0crequest_type\x18\x05 \x01(\t\x12\x0c\n\x04indx\x18\x06 \x01(\x05\x12\x15\n\rclusterNodeIp\x18\x07 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x08 \x01(\r\x12\x17\n\x0f\x63lusterNodeName\x18\t \x01(\t\x12\x10\n\x08\x63lientIp\x18\n \x01(\t\x12\x12\n\nclientPort\x18\x0b \x01(\r\")\n\x0b\x43ommitEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12\r\n\x05value\x18\x02 \x01(\t\"\xda\x01\n\tLogRepair\x12\"\n\x05\x65ntry\x18\x01 \x03(\x0b\x32\x13.LogRepair.LogEntry\x12\x10\n\x08leaderIp\x18\x02 \x01(\t\x12\x12\n\nleaderPort\x18\x03 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x04 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x05 \x01(\r\x1aS\n\x08LogEntry\x12\x0f\n\x07transId\x18\x01 \x01(\r\x12\x0b\n\x03key\x18\x02 \x01(\r\x12\r\n\x05value\x18\x03 \x01(\t\x12\x0c\n\x04term\x18\x04 \x01(\r\x12\x0c\n\x04indx\x18\x05 \x01(\x05\"\x8f\x01\n\x11LogRepairResponse\x12\x16\n\x0erepairResponse\x18\x01 \x01(\t\x12\x0c\n\x04indx\x18\x02 \x01(\x05\x12\x10\n\x08leaderIp\x18\x03 \x01(\t\x12\x12\n\nleaderPort\x18\x04 \x01(\r\x12\x15\n\rclusterNodeIp\x18\x05 \x01(\t\x12\x17\n\x0f\x63lusterNodePort\x18\x06 \x01(\r\"\x84\x04\n\x0fKeyValueMessage\x12,\n\x10setup_connection\x18\x01 \x01(\x0b\x32\x10.SetupConnectionH\x00\x12(\n\x0estart_election\x18\x02 \x01(\x0b\x32\x0e.StartElectionH\x00\x12$\n\x0crequest_vote\x18\x03 \x01(\x0b\x32\x0c.RequestVoteH\x00\x12&\n\rresponse_vote\x18\x04 \x01(\x0b\x32\r.ResponseVoteH\x00\x12.\n\x11heartbeat_message\x18\x05 \x01(\x0b\x32\x11.HeartBeatMessageH\x00\x12(\n\x0e\x63lient_request\x18\x06 \x01(\x0b\x32\x0e.ClientRequestH\x00\x12*\n\x0fleader_response\x18\x07 \x01(\x0b\x32\x0f.LeaderResponseH\x00\x12\x35\n\x15\x61ppend_entry_response\x18\x08 \x01(\x0b\x32\x14.AppendEntryResponseH\x00\x12$\n\x0c\x63ommit_entry\x18\t \x01(\x0b\x32\x0c.CommitEntryH\x00\x12 \n\nlog_repair\x18\n \x01(\x0b\x32\n.LogRepairH\x00\x12\x31\n\x13log_repair_response\x18\x0b \x01(\x0b\x32\x12.LogRepairResponseH\x00\x42\x13\n\x11key_value_messageb\x06proto3')
 )
 
 
@@ -290,8 +290,8 @@ _HEARTBEATMESSAGE_APPEND_ENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=549,
-  serialized_end=636,
+  serialized_start=578,
+  serialized_end=665,
 )
 
 _HEARTBEATMESSAGE = _descriptor.Descriptor(
@@ -357,6 +357,13 @@ _HEARTBEATMESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='isLastEntryCommited', full_name='HeartBeatMessage.isLastEntryCommited', index=8,
+      number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -370,7 +377,7 @@ _HEARTBEATMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=354,
-  serialized_end=636,
+  serialized_end=665,
 )
 
 
@@ -400,8 +407,8 @@ _CLIENTREQUEST_GETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=829,
-  serialized_end=854,
+  serialized_start=858,
+  serialized_end=883,
 )
 
 _CLIENTREQUEST_PUTREQUEST = _descriptor.Descriptor(
@@ -437,8 +444,8 @@ _CLIENTREQUEST_PUTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=856,
-  serialized_end=896,
+  serialized_start=885,
+  serialized_end=925,
 )
 
 _CLIENTREQUEST = _descriptor.Descriptor(
@@ -502,8 +509,8 @@ _CLIENTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=639,
-  serialized_end=896,
+  serialized_start=668,
+  serialized_end=925,
 )
 
 
@@ -561,8 +568,8 @@ _LEADERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=898,
-  serialized_end=998,
+  serialized_start=927,
+  serialized_end=1027,
 )
 
 
@@ -662,8 +669,8 @@ _APPENDENTRYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1001,
-  serialized_end=1231,
+  serialized_start=1030,
+  serialized_end=1260,
 )
 
 
@@ -700,8 +707,8 @@ _COMMITENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1233,
-  serialized_end=1274,
+  serialized_start=1262,
+  serialized_end=1303,
 )
 
 
@@ -759,8 +766,8 @@ _LOGREPAIR_LOGENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1412,
-  serialized_end=1495,
+  serialized_start=1441,
+  serialized_end=1524,
 )
 
 _LOGREPAIR = _descriptor.Descriptor(
@@ -817,8 +824,8 @@ _LOGREPAIR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1277,
-  serialized_end=1495,
+  serialized_start=1306,
+  serialized_end=1524,
 )
 
 
@@ -883,8 +890,8 @@ _LOGREPAIRRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1498,
-  serialized_end=1641,
+  serialized_start=1527,
+  serialized_end=1670,
 )
 
 
@@ -987,8 +994,8 @@ _KEYVALUEMESSAGE = _descriptor.Descriptor(
       name='key_value_message', full_name='KeyValueMessage.key_value_message',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1644,
-  serialized_end=2160,
+  serialized_start=1673,
+  serialized_end=2189,
 )
 
 _SETUPCONNECTION_CLUSTER.containing_type = _SETUPCONNECTION

@@ -47,6 +47,7 @@ message HeartBeatMessage {
     string msgType = 6;
     string clientIp = 7;
     uint32 clinetPort = 8;
+    string isLastEntryCommited = 9;
 }
 
 message ClientRequest {
